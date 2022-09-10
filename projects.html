@@ -2,22 +2,23 @@
 <meta name="viewport" content="width=device-widh, initial-scale=1">
 <style>
 body {
-    background-color: rgb(227, 242, 223);
+        background-color: rgb(227, 242, 223);
+}
+h2 {    
+    text-align: center;
 }
 p {
     text-align: center;
-    font-size: 25px;
-}
-h1  {
-        text-align: center;
-        margin-left: 5;
-        text-shadow: #5ec6e8;
-}
-img {
-    border-radius: 150px;
+    font-size: 20px;
+    font-style: italic;
+    font-family: 'Courier New', Courier, monospace;
 }
 .pos {
-    margin-left: -300px;
+    margin-top: 30px;
+}
+h3 {
+    font-size: 20px;
+    text-align: center;
 }
 .dropbtn {
     background-color: #04AA6D;
@@ -47,8 +48,6 @@ img {
 .dropdown-content a:hover {background-color: #ddd;}
 .dropdown:hover .dropdown-content {display: block;}
 </style>
-
-<body>
 <div class="dropdown">
     <button class="dropbtn">MENU</button>
     <div class="dropdown-content">
@@ -58,14 +57,13 @@ img {
         <a href="./experience.html">experience</a>
     </div>
 </div>
-<h1>Kunkai Lin</h1>
-<div style="text-align: center;">
-    <img src="./images/1.jpg" width="250" height="250">
-</div>
-<p>Welcome to my personal website! I am a rising senior studying Computer Science at UC Berkeley. </p>
-<p>Broadly, my interests lie in Computer Systems (Operating Systems, Database Systems) and Computer Security.</p>
-<p>In my free time, I am interested in playing poker games and Rubik's cube.</p>
-<p>Click the button at top left to explore the website!</p>
-</body>
+<h2>Course Projects</h2>
+<div class="pos"></div>
+<a href="./pintos.html"><h3>Pintos (CS 162)</h3></a>
+<div style="text-align:center;"><img src="./images/os.jpg" width="300" height="300"></div>
+<div class="pos"></div>
+<a href="./FSS.html"><h3>End-to-End File Sharing System (CS 161)</h3></a>
+<div style="text-align:center;"><img src="./images/cs.jpg" width="300" height="300"></div>
 
+</body>
 </html>
