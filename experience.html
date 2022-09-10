@@ -1,19 +1,12 @@
 <html>
 <style>
-body
-    {
-        background-image: url(./images/backgroundimage.webp);
-    }
-h1
-    {
-        text-align: center;
-        margin-left: 5;
-        text-shadow: #5ec6e8;
-    }
+body {
+        background-color: rgb(227, 242, 223);
+}
 h2 {    
-    text-align: center;
+    margin-left: 30%;
     text-shadow: #5ec6e8;
-    }
+}
 p {
     text-align: center;
     font-size: 20px;
@@ -22,29 +15,14 @@ p {
 }
 h3 {
     font-size: 20px;
-    font-style: italic;
-    font-family: 'Courier New', Courier, monospace;
+    margin-left: 30%;
 }
-img {
-    border-radius: 50px;
-}
-.pos {
-    margin-left: -300px;
-}
-.line {
-    width: 100%;
-    height: 1px;
-    border-top: 1px solid black;
-}
-
 .dropbtn {
-    background-image: url(./images/backgroundimage.webp);
-    color: black;
-    font-style:normal;
-    font-size: 40px;
-    width: 150px;
-    height: 60px;
-    position: relative;
+    background-color: #04AA6D;
+    color: white;
+    font-size:16px;
+    padding: 16px;
+    border: none;
 }
 .dropdown {
     position:relative;
@@ -53,30 +31,34 @@ img {
 .dropdown-content {
     display: none;
     position:absolute;
-    background-image:url(./images/backgroundimage.webp);
-    font-size: 25px;
-    text-align: center;
-    width: 150px;
-    height: 60px;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
 }
 .dropdown-content a {
     color: black;
+    padding: 12px 16px;
     text-decoration: none;
-    display: inline-block;
+    display: block;
 }
-.dropdown-content a:hover {background-image: url(./images/backgroundimage.webp);}
+.dropdown-content a:hover {background-color: #ddd;}
 .dropdown:hover .dropdown-content {display: block;}
-.dropdown:hover .dropbtn {background-color:black;}
 </style>
 
 <body>
-<div class="line"></div>
-<h2>Working and Teaching Experience</h2>
-<div class="line"></div>
-<a href="./index.html" class="dropbtn">back</a>
+<div class="dropdown">
+    <button class="dropbtn">menu</button>
+    <div class="dropdown-content">
+        <a href="./index.html">home page</a>
+        <a href="./coursework.html">coursework</a>
+        <a href="./experience.html">experience</a>
+    </div>
+</div>
+<h2>Experience</h2>
 
-<h3>Front-End Development Intern 💻 @ByteDance Inc 2021.6 - 2021.8 Beijing</h3>
-<h3>Fall 2022 CS 162 Reader 👨 @UC Berkeley EECS Department 2022.8 - present Berkeley, CA</h3>
+<h3>Front-End Development Intern 💻 | @ByteDance| 2021.6 - 2021.8 | Beijing</h3>
+<h3>Fall 2022 CS 162 Reader 👨 | @UC Berkeley EECS Department| 2022.8 - present | Berkeley, CA</h3>
 
 </body>
 
