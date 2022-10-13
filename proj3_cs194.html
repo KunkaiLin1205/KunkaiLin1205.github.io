@@ -1,0 +1,405 @@
+<html>
+<meta name="viewport" content="width=device-widh, initial-scale=1">
+<style>
+    body {
+        background-color: rgb(227, 242, 223);
+    }
+    h1 {
+        text-align: center;
+        font-size: 20px;
+    }
+    h2 {
+        text-align: left;
+        font-size: 20px;
+    }
+    h3 {
+        font-size: 20px;
+        text-align: center;
+    }
+    h4 {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 15px;
+        margin-left: 10px;
+    }
+    p {
+        font-size: 20px;
+    }
+    .imageblock {
+        display: flex;
+        justify-content: space-between;
+    }
+    .imageblock figure {
+        display: inline-flex;
+        flex-direction: column;
+        text-align: center;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 18px;
+        width: 30vw;
+        margin: 0;
+    }
+    .imageblock figure * {
+        width: 80%;
+    }
+    .imageblock2 {
+        display: flex;
+        justify-content: space-between;
+    }
+    .imageblock2 figure {
+        display: inline-flex;
+        flex-direction: column;
+        text-align: center;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 18px;
+        width: 20vw;
+        margin: 0;
+    }
+    .imageblock2 figure * {
+        width: 100%;
+    }
+    .imageblock3 {
+        display: flex;
+        justify-content: space-between;
+    }
+    .imageblock3 figure {
+        display: inline-flex;
+        flex-direction: column;
+        text-align: center;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 18px;
+        width: 30vw;
+        margin-left: 45%;
+    }
+    .imageblock3 figure * {
+        width: 60%;
+    }
+    .c {
+        text-align: center;
+    }
+    .tab {
+        margin-top: 30px;
+    }
+    .end {
+        margin-top: 100px;
+    }
+</style>
+<body>
+    <h1>CS 194 : Project 3 -- Face Morphing</h1>
+    <h1>Kunkai Lin</h1>
+    <h2>Overview</h2>
+    <p>The project is mainly about image morphing. In the first half of the project, I am going to produce a "morph" animation of my face into my friend's face, and
+        for the second half, I am going to compute the mean of a population's faces and extrapolate from that mean to create a caricature of myself. It's further divided
+        into 5 parts and 1 additional part for Bells and Whistles: 1) Defining correspondence points and construct the triangulation, 2) Compute the "mid-way face" 
+        between my face and my friend's face, 3) Creating the morph sequence and generate the gif with 45 frames of animation, 4) Compute the "mean face" of a population
+        based on database given on website, 5) Extrapolating from the mean to create caricature of myself, and 6) Music video + Change Gender.
+    </p>
+    <h2>Part 1 : Defining Correspondences</h2>
+    <div class="tab"></div>
+    <p> To start with, I first select 26 keypoints from each input image: my face and my friend's face manually using the ginput() function from matplot library and then
+        compute the mean of the two point sets. Then, I used the mean of point sets computed to construct the triangulation mesh for morphing using Delaunay() function from the
+        scipy library. The Delaunay() function worked pretty well as it would not produce overly skinny triangles.
+    </p>
+    <p>Below are the facial keypoints and triangulation I generated:</p>
+    <div class="imageblock">
+        <figure class="aboutimage">
+            <figcaption>my face</figcaption>
+            <img src="./images/morph_img/points1.jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>my friend's face</figcaption>
+            <img src="./images/morph_img/points2.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>my face</figcaption>
+            <img src="./images/morph_img/triangulation1.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>my friend's face</figcaption>
+            <img src="./images/morph_img/triangulation2.jpg"">
+        </figure>
+    </div>
+    <div class="tab"></div>
+    <h2>Part 2 : Computing the "Mid-way Face"</h2>
+    <p>Next, I am going to compute a mid-way face of my face and my friend's face and the steps are:</p>
+    <h3>1.Compute the average shape. For this, I just reuse the mean point set computed in part 1.</h3>
+    <h3>2.Warping both faces into the average shape. To do this, we need to first compute the affine transformation matrix for each pair of triangles on two images, so I defined
+        computeAffine() function which will take the coordinates of two triangles and return the transformation matrix. In this function, I first append each of the coordinates with
+        ones-vector to turn them into 3-vectors and then compute the matrix by linear algebra: T*A = B -> T = B*A^(-1) where A, B are the coordinates of the first and the second triangles
+        and T is the transformation matrix. This could cause some problems when A is singular, but for the triangles I constructed in this part and the triangles provided in later parts,
+        it works well.
+    </h3>
+    <h3>3.Average the colors together. I come up with this by using inverse warp mentioned in lecture as it will not cause holes on images compared with forward warp.
+        For each image, I first compute the transformation matrices between triangles in the original shape and the ones in the average shape with computeAffine() function described
+        above and then implement an inverse warp on each pair of triangles. To get the pixels in each triangle, polygon() function from skimage library helps a lot as I can create a
+        mask by it and use the mask to get coordinates of all pixels in the triangle. After geting the coordinates of pixels in the triangle in average shape, I then compute the ones
+        in the original shape using the inverse of the corresponding transformation matrix I compute before. After traversing through each triangle, I get the warped image for one single
+        face and then I do the same thing to the another image.
+    </h3>
+    <h3>4.Finally, I just combine two warped faces I get by the steps above with dissolve_frac = 0.5 as I am going to compute the "Mid-way Face".</h3>
+    <p>Below are the original image of my face, the "Mid-way Face" and the original image of my friend's face:</p>
+    <div class="imageblock">
+        <figure class="aboutimage">
+            <figcaption>my face, orignial image1</figcaption>
+            <img src="./images/morph_img/mypicture.jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>"Mid-way Face"</figcaption>
+            <img src="./images/morph_img/midway.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>my friend's face, orignal image2</figcaption>
+            <img src="./images/morph_img/myfriend.jpg">
+        </figure>
+    </div>
+    <div class="tab"></div>
+    <h2>Part 3 : The Morph Sequence</h2>
+    <div class="tab"></div>
+    <p>Now, after completing the implementations of computing affine matrix and inverse warping the image, the morph() function is very straightforward to implement. In part 2,
+        I create the "Mid-way face" by warping both of faces to the average shape, so the warp_frac I use here is 0.5. To generate a sequence, we just need to change the warp_frac
+        over time to warp the image in different shapes and with different colors depending on the dissolve_frac chosen. To get a sequence of a morph from my face to my friend's face,
+        I choose 45 values from [0, 1] evenly and use them for warp_frac and dissolve_frac each time to generate 45 frames with warp_frac/dissolve_frac = 0 at the beginning and
+        warp_frac/dissolve_frac = 1.0 at the end. 
+    </p>
+    <p>In addition, to make the result more pleasing to eyes, I append 45 frames in a reverse order to the original 45 frames to generate a two way animation: from my face to
+        my friend's face and then back to my face.
+    </p>
+    <div class="imageblock3">
+        <figure class="aboutimage">
+            <figcaption>Two way animated gif between my face and my friend's face</figcaption>
+            <img src="./images/morph_img/me_and_myfriend_2way.gif">
+        </figure>
+    </div>
+
+    <h2>Part 4 : The "Mean Face" Of a Population</h2>
+    <p>Let's compute the "Mean Face" of a population! To start with, I downloaded images and keypoint sets from <a href="https://fei.edu.br/~cet/facedatabase.html">FEI Face Database</a>.
+        (images are the nomralized ones: frontalimages_spatiallynormalized_part1 and frontalimages_spatiallynormalized_part2). Then,
+    </p>
+    <h3>1.Compute the average face shape of the whole population. I first compute the average face shape of 200 neutral faces and 200 smiling faces separately. 
+        During the process, I noticed some of the keypoint sets given were incorrect and giving coordinates out of the range (250x300 image), so I skipped these images
+        and point sets. This should not matter a lot since only about 10 out of 200 images have the issue.
+    </h3>
+    <h3>2.Morph each of the faces in the dataset into the average shpae. To make sure the whole image can be warped, I also add four corners to each of point set given and
+        the steps left are the same as the ones in first 3 parts (morph my face to my friend's face) above. Below are some pairs of the original face and the morphed face:
+    </h3>
+    <p>Neutral:</p>
+    <div class="imageblock2">
+        <figure class="aboutimage">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/1a.jpg"">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/43a.jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/1a_morphed.jpg">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/43a_morphed.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/10a.jpg"">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/51a.jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/10a_morphed.jpg">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/51a_morphed.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/20a.jpg"">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/58a.jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/20a_morphed.jpg">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/58a_morphed.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/30a.jpg"">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/60a.jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/30a_morphed.jpg">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/60a_morphed.jpg">
+        </figure>
+    </div>
+    <p>Smile:</p>
+    <div class="imageblock2">
+        <figure class="aboutimage">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/1b.jpg"">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/43b.jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/1b_morphed.jpg">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/43b_morphed.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/10b.jpg"">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/51b.jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/10b_morphed.jpg">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/51b_morphed.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/20b.jpg"">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/58b.jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/20b_morphed.jpg">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/58b_morphed.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/30b.jpg"">
+            <figcaption>Original</figcaption>
+            <img src="./images/morph_img/60b.jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/30b_morphed.jpg">
+            <figcaption>Morphed</figcaption>
+            <img src="./images/morph_img/60b_morphed.jpg">
+        </figure>
+    </div>
+    <h3>3.Compute the average face of the population. Using the results from the second step, the average face can be computed easily.</h3>
+    <p>Below are the results I get for neutral faces and simle faces respectively:</p>
+    <div class="imageblock2">
+        <figure class="aboutimage">
+            <figcaption>Neutral</figcaption>
+            <img src="./images/morph_img/avg_neutral_face.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Smile</figcaption>
+            <img src="./images/morph_img/avg_smile_face.jpg">
+        </figure>
+    </div>
+    <h3>4.Finally, I reslect 42 keypoints on each image and warp my face to each of the average face and vice versa.</h3>
+    <p>Reselect Keypoints:</p>
+    <div class="imageblock2">
+        <figure class="aboutimage">
+            <figcaption>my face</figcaption>
+            <img src="./images/morph_img/part4_mypoints.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>neutral avg face</figcaption>
+            <img src="./images/morph_img/part4_avgfacepoints1.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>smile avg face</figcaption>
+            <img src="./images/morph_img/part4_avgfacepoints2.jpg">
+        </figure>
+    </div>
+    <p>Results:</p>
+    <div class="imageblock2">
+        <figure class="aboutimage">
+            <figcaption>my face</figcaption>
+            <img src="./images/morph_img/myface.jpg">
+            <figcaption>my face</figcaption>
+            <img src="./images/morph_img/myface.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>my face to neutral average face</figcaption>
+            <img src="./images/morph_img/me_to_avgface1.jpg">
+            <figcaption>my face to smile average face</figcaption>
+            <img src="./images/morph_img/me_to_avgface2.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>neutral average face to my face</figcaption>
+            <img src="./images/morph_img/avgface_to_me1.jpg">
+            <figcaption>smile average face to my face</figcaption>
+            <img src="./images/morph_img/avgface_to_me2.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>netural average face</figcaption>
+            <img src="./images/morph_img/avg_neutral_face.jpg">
+            <figcaption>smile average face</figcaption>
+            <img src="./images/morph_img/avg_smile_face.jpg">
+        </figure>
+    </div>
+    <p>From "my face to smile average face" and "smile average face to my face", we can see that the whole face especially the part of mouse changes apparently:
+        while my face changes from neutral to smile, the average face changes from smile to neutral.
+    </p>
+    <h2>Part 5 : Caricatures, Extrapolating From The Mean</h2>
+    <p>At the end, I produce a caricature of my face by extrapolating form two characteristic population means I compute in last part (neutral and smile face).
+        I first calculate the deviation by subtracting the shape of mean from the shape of my face and then get a new shape to warp by adding my face's shape
+        and alpha * deviation where alpha decides the final effects of the deviation.
+    </p>
+    <p>We can see that as the value of alpha becomes larger, the results become more exaggerated.</p>
+    <div class="imageblock2">
+        <figure class="aboutimage">
+            <figcaption>neutral, alpha=0.2</figcaption>
+            <img src="./images/morph_img/caricature_neutral0.2.jpg">
+            <figcaption>smile, alpha=0.2</figcaption>
+            <img src="./images/morph_img/caricature_smile0.2.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>neutral, alpha=0.6</figcaption>
+            <img src="./images/morph_img/caricature_neutral0.6.jpg">
+            <figcaption>smile, alpha=0.6</figcaption>
+            <img src="./images/morph_img/caricature_smile0.6.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>neutral, alpha=1.0</figcaption>
+            <img src="./images/morph_img/caricature_neutral1.0.jpg">
+            <figcaption>smile, alpha=1.0</figcaption>
+            <img src="./images/morph_img/caricature_smile1.0.jpg">
+        </figure>
+    </div>
+
+    <h2>Bells and Whistles</h2>
+    <h2>Morphing Music Video</h2>
+    <p>I produce a music video about players in a Chinese League of Legends eSports team to wish they can do well in the upcoming World Championships.
+        I morph each of the players to the characters in the game they play very often and use <a href="https://www.youtube.com/watch?v=4Q46xYqUwZQ">Legneds Never Die</a> as BGM.
+    </p>
+
+    <h3><a href="https://www.youtube.com/watch?v=9UoB5e77F1E">Click here to watch the video on Youtube</a></h3>
+
+    <h2>Change Gender</h2>
+    <p>Then, I also download an Asian women average face from web and try to morph my face to it.</p>
+    <div class="imageblock2">
+        <figure class="aboutimage">
+            <figcaption>my face</figcaption>
+            <img src="./images/morph_img/myface2.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>morph shape only</figcaption>
+            <img src="./images/morph_img/shape_morphed.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>morph appearance only</figcaption>
+            <img src="./images/morph_img/appearance_morphed.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>both</figcaption>
+            <img src="./images/morph_img/both_morphed.jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>Asian women average face from web</figcaption>
+            <img src="./images/morph_img/women_avg_face.jpg">
+        </figure>
+    </div>
+    <div class="end"></div>
+</body>
+
+</html>

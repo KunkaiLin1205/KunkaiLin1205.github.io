@@ -1,0 +1,272 @@
+<html>
+<meta name="viewport" content="width=device-widh, initial-scale=1">
+<style>
+    body {
+        background-color: rgb(227, 242, 223);
+    }
+    h1 {
+        text-align: center;
+        font-size: 20px;
+    }
+    h2 {
+        text-align: left;
+        font-size: 20px;
+    }
+    h3 {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 15px;
+        margin-left: 20px;
+    }
+    h4 {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 15px;
+        margin-left: 10px;
+    }
+    p {
+        text-align: center;
+        font-size: 20px;
+    }
+    .imageblock {
+        display: flex;
+        justify-content: space-between;
+    }
+    .imageblock figure {
+        display: inline-flex;
+        flex-direction: column;
+        text-align: center;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 18px;
+        width: 30vw;
+        margin: 0;
+    }
+    .imageblock figure * {
+        width: 80%;
+    }
+    .imageblock2 {
+        display: flex;
+        justify-content: space-between;
+    }
+    .imageblock2 figure {
+        display: inline-flex;
+        flex-direction: column;
+        text-align: center;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 18px;
+        width: 30vw;
+        margin: 0;
+    }
+    .imageblock2 figure * {
+        width: 50%;
+    }
+    .imageblock3 {
+        display: flex;
+        justify-content: space-between;
+    }
+    .imageblock3 figure {
+        display: inline-flex;
+        flex-direction: column;
+        text-align: center;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 18px;
+        width: 30vw;
+        margin: 0;
+    }
+    .imageblock3 figure * {
+        width: 60%;
+    }
+    .c {
+        text-align: center;
+    }
+    .tab {
+        margin-top: 60px;
+    }
+</style>
+<body>
+    <h1>CS 194 : Project 1 -- Images of the Russia Empire : Colorizing the Prokudin-Gorskii Collection</h1>
+    <h1>Kunkai Lin</h1>
+    <h2>Overview</h2>
+    <p>The goal of project is to take the digitized Prokudin-Gorskii glass plate image, and apply some image processing techniques to produce color
+        images with as few visual artifacts as possible. The basic idea is spliting the input image into 3 color channels and align R and G by placing
+        them on top of B respectively to form a RBG image at the end. This website will be mainly divided into 4 parts: 1) single-scale implementation on low res 
+        images (including the comparison between images before and after the alignment), 2) multiscale pyramid version implementation on large images (also including some comparisons), 
+        3) Bells & Whistles : some techniques to enhance the quality of output. 4)Show the final results (the results get after applying techniques from 1) 2) 3))
+        of all example images and some extra images downloaded from the Prokudin-Gorskii collection.
+    </p>
+    <h2>Part 1 : Single-scale implementation</h2>
+    <p>The single-scale implementation is very naive. As described above, I first split the input to 3 color channels (R, G and B) and align R and G by matching each of them to 
+        B. The function will search exhaustively over a window of displacement [-15, 15] pixels (30x30 window) and score each one using Sum of Squared Differences(SSD) between shifted R(or G) 
+        and B and keep the displacement for R and G with best score (smallest differences) respectively. Finally, align R and G with their displacement kept and get the RGB image 
+        by aligned R, aligned G and B.
+    </p>
+    <p>This naive implementation works well for small/low res images and the comparisons between example images before and after alignment are shown below:</p>
+    <div class="imageblock">
+        <figure class="aboutimage">
+            <figcaption>before alignment</figcaption>
+            <img src="./images/colorize_img/catheral(before alignment).jpg">
+            <figcaption>before alignment</figcaption>
+            <img src="./images/colorize_img/tobolsk(before alignment).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>after alignment G:[-1, 1] R:[-1, 7]</figcaption>
+            <img src="./images/colorize_img/cathedral(after alignment).jpg" title="After alignment">
+            <figcaption>after alignment G:[2, 3] R:[3, 6]</figcaption>
+            <img src="./images/colorize_img/tobolsk(after alignment).jpg" title="After alignment">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>before alignment</figcaption>
+            <img src="./images/colorize_img/monastery(before alignment).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>after alignment G:[0, -6] R:[1, 9]</figcaption>
+            <img src="./images/colorize_img/monastery(after alignment).jpg" title="After alignment">
+        </figure>
+    </div>
+    <div class="tab"></div>
+    <h2>Part 2 : Multiscale pyramid implementation</h2>
+    <p>Single-scale implementation above looks good for small images, but it's too expensive for large images. Thus, I introduce a new algorithm for large images: multiscale pyramid
+        version alignment. To begin with, I create a list of rescaled images (with a factor of 2) of the given image and order them from the smallest (>= 30x30 since my search window in Part 1 is 30x30) 
+        to the largest (original image). Then, the procedure looks like this:  
+    </p>
+    <h4>Taking one image from two pre-created lists (one for rescaled G or R, one for rescaled B) respectively each time:</h4>
+    <h3>1)Update the displacement : multiply it by 2 (correspond to the factor I use to rescale the image);</h3>
+    <h3>2)Align the G (or R) rescaled image with the best displacement so far;</h3>
+    <h3>3)Recursively call single-scale implementation described in part 1 on aligned rescaled G (or R) image and rescaled B image
+        to get displacement for this term;</h3>
+    <h3>4)Update the displacement based on the result from 3).</h3>
+    <p>
+        The implementation provides us the displacement needed for G and R alignment, and we can get RGB color image with the same steps in part 1 with the displacement.
+    </p>
+    <p>I provide some of the comparisons between example images before and after alignment below:(A full list of results will be shown in part 4)</p>
+    <div class="imageblock">
+        <figure class="aboutimage">
+            <figcaption>before alignment</figcaption>
+            <img src="./images/colorize_img/three_generation(before alignment).jpg">
+            <figcaption>before alignment</figcaption>
+            <img src="./images/colorize_img/melons(before alignment).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>after alignment G:[5, 52] R:[7, 108]</figcaption>
+            <img src="./images/colorize_img/three_generations(after alignment).jpg">
+            <figcaption>after alignment G:[4, 83] R:[7, 176]</figcaption>
+            <img src="./images/colorize_img/melons(after alignment).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>before alignment</figcaption>
+            <img src="./images/colorize_img/lady(before alignment).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>lafter alignment G:[-6, 57] R:[-17, 123]</figcaption>
+            <img src="./images/colorize_img/lady(after alignment).jpg">
+        </figure>
+    </div>
+    <p>From above, we can see the pyramid implementation works pretty well for these example images, and it works well for most of other example images, too. However, it does poorly 
+        for emir, train and harvesters. After I check the B, G, R images for these three exceptions, I realize the reason could be the brightness of their B, G, R channels are totally 
+        different (just as mentioned on project's spec).
+    </p>
+    <p>To solve this issue, I provide a new feature: edge, for each of B, G, R and align them based on edges instead of RGB similarity. The details are explained in the next
+        part: Bells & Whistles.
+    </p>
+    <div class="tab"></div>
+    <h2>Part 3 : Bells & Whistles(Aligned the images based on edges instead of RGB similarity)</h2>
+    <p>To get the edges of each B, G, R images, I apply the sobel vertical edge filter ([[1,0,-1],[2,0,-2],[1,0,-1]]) and sobel horizontal edge filer ([[1,2,1],[0,0,0],[-1,-2,-1]]) introduced in lecture, and from my intuition, return MAX(vertical
+        edges, horizontal edges) to get the complete edges and the results prove that my intuition should be correct. This algorithm takes about 60 to 80 seconds to figure out the edges of one channel. It's
+        not very fast but the time looks reasonable. After extracting the edges of B, G, and R, I just go through the same steps described in part 2 based on edges and align G and B with displacement get.
+    </p>
+    <p>One point should be noted here is that: we should take the absolute value of filter's output, I forget this at my first implementation and it slightly affects the final results.</p>
+    <p>Below is what I get after apply edge filter on emir's B channel:</p>
+    <div class="c"><img src="./images/colorize_img/emif-edge-b.jpg" width="350" height="300"></div>
+    <p>
+        Below are the result before and after using the "edges" feature:
+    </p>
+    <div class="imageblock">
+    <figure class="aboutimage">
+        <figcaption>based on RGB similarity G:[7, -3] R:[17, 107]</figcaption>
+        <img src="./images/colorize_img/emir(after alignment).jpg">
+    </figure>
+    <figure class="aboutimage">
+        <figcaption>based on edges G:[-2, 50] R:[40, 107]</figcaption>
+        <img src="./images/colorize_img/emif(after alignment + edge filter).jpg">
+    </figure>
+    <figure class="aboutimage">
+        <figcaption>based on RGB similarity G:[-7, 111] R:[1, 107]</figcaption>
+        <img src="./images/colorize_img/train(after alignment).jpg">
+    </figure>
+    <figure class="aboutimage">
+        <figcaption>based on edges G:[1, 41] R:[29, 85]</figcaption>
+        <img src="./images/colorize_img/train(after alignment + edge filter).jpg">
+    </figure>
+    </div>
+    <div class="tab"></div>
+    <h2>Part 4 : Results (I also state the feasure each alignment based on for each image)</h2>
+    <p>Small images:</p>
+    <div class="imageblock3">
+        <figure class="aboutimage">
+            <figcaption>cathedral(RGB similarity) G:[-1, 1] R:[-1, 7]</figcaption>
+            <img src="./images/colorize_img/cathedral(after alignment).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>monastery(RGB similarity) G:[0, -6] R:[1, 9]</figcaption>
+            <img src="./images/colorize_img/monastery(after alignment).jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>tobolsk(RGB similarity) G:[2, 3] R:[3, 6]</figcaption>
+            <img src="./images/colorize_img/tobolsk(after alignment).jpg">
+        </figure>
+    </div>
+    <p>Large images:</p>
+    <div class="imageblock">
+        <figure class="aboutimage">
+            <figcaption>church(RGB similarity) G:[-5, 0] R:[-6, 52]</figcaption>
+            <img src="./images/colorize_img/church(after alignment).jpg">
+            <figcaption>lady(RGB similarity) G:[-6, 57] R:[-17, 123]</figcaption>
+            <img src="./images/colorize_img/lady(after alignment).jpg">
+            <figcaption>self_portrait(RGB similarity) G:[-2, 50] R:[-5, 130]</figcaption>
+            <img src="./images/colorize_img/self_portrait(after alignment).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>emir(edges) G:[-2, 50] R:[40, 107]</figcaption>
+            <img src="./images/colorize_img/emif(after alignment + edge filter).jpg"">
+            <figcaption>melons(RGB similarity) G:[4, 83] R:[7, 176]</figcaption>
+            <img src="./images/colorize_img/melons(after alignment).jpg">
+            <figcaption>three_generations(RGB similarity) G:[5, 52] R:[7, 108]</figcaption>
+            <img src="./images/colorize_img/three_generations(after alignment).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>harvesters(edges) G:[-6, 84] R:[3, 126]</figcaption>
+            <img src="./images/colorize_img/harvesters(after alignment + edge filter).jpg"">
+            <figcaption>onion_church(RGB similarity) G:[22, 52] R:[35, 108]</figcaption>
+            <img src="./images/colorize_img/onion_church(after alignment).jpg">
+            <figcaption>train(edges) G:[1, 41] R:[29, 85]</figcaption>
+            <img src="./images/colorize_img/train(after alignment + edge filter).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>icon(RGB similarity) G:[16, 42] R:[22, 89]</figcaption>
+            <img src="./images/colorize_img/icon(after alignment).jpg">
+            <figcaption>sculpture(RGB similarity) G:[-11, 33] R:[-26, 140]</figcaption>
+            <img src="./images/colorize_img/sculpture(after alignment).jpg">
+        </figure>
+    </div>
+    <p>Extra images from the Prokudin-Gorskii collection:</p>
+    <div class="imageblock">
+        <figure class="aboutimage">
+            <figcaption>in_little_Russia(edges) G:[-3, 20] R:[-5, 232]</figcaption>
+            <img src="./images/colorize_img/in_little_Russia(after alignment).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>lilacs(edges) G:[29, 31] R:[12, 51]</figcaption>
+            <img src="./images/colorize_img/lilacs(after alignment).jpg">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>buildings_trees(edges) G:[12, 45] R:[25, 98]</figcaption>
+            <img src="./images/colorize_img/buildings_trees (after alignment).jpg"">
+        </figure>
+        <figure class="aboutimage">
+            <figcaption>in_Italy(RGB similarity) G:[7, 25] R:[11, 87]</figcaption>
+            <img src="./images/colorize_img/in_Italy (after alignment).jpg">
+        </figure>
+    </div>
+    <div class="tab"></div>
+    <a href="./projects.html"><h1>BACK</h1></a>
+</body>
+
+</html>
