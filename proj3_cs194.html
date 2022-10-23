@@ -1,8 +1,18 @@
 <html>
+<meta name="viewport" content="width=device-widh, initial-scale=1">
 <head>
     <link rel="stylesheet" href="style2.css">
 </head>
 <body>
+    <div class="dropdown">
+        <button class="dropbtn">MENU</button>
+        <div class="dropdown-content">
+            <a href="./index.html">home page</a>
+            <a href="./coursework.html">coursework</a>
+            <a href="./projects.html">projects</a>
+            <a href="./experience.html">experience</a>
+        </div>
+    </div>
     <h1>CS 194 : Project 3 -- Face Morphing</h1>
     <h1>Kunkai Lin</h1>
     <h2>Overview</h2>
@@ -82,12 +92,7 @@
     <p>In addition, to make the result more pleasing to eyes, I append 45 frames in a reverse order to the original 45 frames to generate a two way animation: from my face to
         my friend's face and then back to my face.
     </p>
-    <div class="imageblock3">
-        <figure class="aboutimage">
-            <figcaption>Two way animated gif between my face and my friend's face</figcaption>
-            <img src="./images/morph_img/me_and_myfriend_2way.gif">
-        </figure>
-    </div>
+    <div style="text-align: center;"><img src="./images/morph_img/me_and_myfriend_2way.gif"></a>
 
     <h2>Part 4 : The "Mean Face" Of a Population</h2>
     <p>Let's compute the "Mean Face" of a population! To start with, I downloaded images and keypoint sets from <a href="https://fei.edu.br/~cet/facedatabase.html">FEI Face Database</a>.
@@ -100,108 +105,6 @@
     <h3>2.Morph each of the faces in the dataset into the average shpae. To make sure the whole image can be warped, I also add four corners to each of point set given and
         the steps left are the same as the ones in first 3 parts (morph my face to my friend's face) above. Below are some pairs of the original face and the morphed face:
     </h3>
-    <p>Neutral:</p>
-    <div class="imageblock2">
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/1a.jpg"">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/43a.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/1a_morphed.jpg">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/43a_morphed.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/10a.jpg"">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/51a.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/10a_morphed.jpg">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/51a_morphed.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/20a.jpg"">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/58a.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/20a_morphed.jpg">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/58a_morphed.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/30a.jpg"">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/60a.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/30a_morphed.jpg">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/60a_morphed.jpg">
-        </figure>
-    </div>
-    <p>Smile:</p>
-    <div class="imageblock2">
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/1b.jpg"">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/43b.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/1b_morphed.jpg">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/43b_morphed.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/10b.jpg"">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/51b.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/10b_morphed.jpg">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/51b_morphed.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/20b.jpg"">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/58b.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/20b_morphed.jpg">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/58b_morphed.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/30b.jpg"">
-            <figcaption>Original</figcaption>
-            <img src="./images/morph_img/60b.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/30b_morphed.jpg">
-            <figcaption>Morphed</figcaption>
-            <img src="./images/morph_img/60b_morphed.jpg">
-        </figure>
-    </div>
     <h3>3.Compute the average face of the population. Using the results from the second step, the average face can be computed easily.</h3>
     <p>Below are the results I get for neutral faces and simle faces respectively:</p>
     <div class="imageblock2">
