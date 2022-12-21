@@ -1,19 +1,20 @@
 <html>
     <meta name="viewport" content="width=device-widh, initial-scale=1">
 <head>
-    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="style_projects_page.css">
 </head>
 <body>
     <div class="dropdown">
         <button class="dropbtn">MENU</button>
         <div class="dropdown-content">
             <a href="./index.html">home page</a>
+            <a href="./about.html">about</a>
             <a href="./coursework.html">coursework</a>
             <a href="./projects.html">projects</a>
             <a href="./experience.html">experience</a>
         </div>
     </div>
-    <h1>CS 194 : Project 2 -- Fun with Filters and Frequencies</h1>
+    <h1>CS 194-26 : Project 2 -- Fun with Filters and Frequencies</h1>
     <h1>Kunkai Lin</h1>
     <h2>Overview</h2>
     <p>The goal of the project is to apply smoothing filters (such as Gaussiann/low-pass and Laplacian/high-pass filters) and derivate filters (such as D_x, D_y)
@@ -21,7 +22,6 @@
         part will mainly talk about the filter and 2) The second part will mainly focus on frequencies.
     </p>
     <h2>Part 1 : Fun with Filters</h2>
-    <div class="tab"></div>
     <h2>Part 1.1 : Finite Difference Operator</h2>
     <p>In this part, we will first go to convolve the image of cameraman with filters in the x and y directions (D_x and D_y) to get the partial derivate in x and y.
         Then, to compute the gradient magnitude of the image, we can follow the formula introduced in lecture:
@@ -31,47 +31,19 @@
         formula to get the gradient magnitude image. Finally, to turn the gradient magnitude image into an edge image, we binarized each pixel of the image with 
         certain threshold got by taking a few tries. The outputs are shown below:
     </p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>Partial derivative in x (with D_x)</figcaption>
-            <img src="./images/filter_img/cameraman_dx.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Partial derivative in y (with D_y)</figcaption>
-            <img src="./images/filter_img/cameraman_dy.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Gradient magnitude</figcaption>
-            <img src="./images/filter_img/cameraman_mag.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Binarized with threshold=0.25</figcaption>
-            <img src="./images/filter_img/cameraman_bin.jpg"">
-        </figure>
-    </div>
-    <div class="tab"></div>
+    <img src="./images/filter_img/cameraman_dx.jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cameraman_dy.jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cameraman_mag.jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cameraman_bin.jpg" width="23%" style="padding-left: 1%;">
+    <div class="end-interval"></div>
     <h2>Part 1.2 : Derivative of Gaussian (DoG) Filters</h2>
     <p>Since just the difference operator were noisy, we would go to smooth the image with Gaussian filter first before convolving it with derivative filters
         in this part. The new results are below:
     </p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>Gaussian + D_x</figcaption>
-            <img src="./images/filter_img/cameraman_G_dx.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Gaussian + D_y</figcaption>
-            <img src="./images/filter_img/cameraman_G_dy.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Gradient magnitude</figcaption>
-            <img src="./images/filter_img/cameraman_G_mag.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Binarized with threshold=0.1</figcaption>
-            <img src="./images/filter_img/cameraman_G_bin.jpg"">
-        </figure>
-    </div>
+    <img src="./images/filter_img/cameraman_G_dx.jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cameraman_G_dy.jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cameraman_G_mag.jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cameraman_G_bin.jpg" width="23%" style="padding-left: 1%;">
     <p>From above, the biggest difference I noticed after applying the Gaussian filter was that the edges of images became much thicker and more apparent than before.
         This is consistent with my intuition as the Gaussian filter would blur the image and smooth it by removing the noise in some extents, so the edges could be 
         emphasized when we apply derivative filters in this case.
@@ -80,37 +52,15 @@
         In this case, we can get the same results as above but only need to do one single convolution instead of two. Below are DoG filters as images and the results
         with DoG filters:
     </p>
-    <div class="imageblock2">
-        <figure class="aboutimage">
-            <figcaption>DoG in x direction</figcaption>
-            <img src="./images/filter_img/DoG_x.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>DoG in y direction</figcaption>
-            <img src="./images/filter_img/DoG_y.jpg">
-        </figure>
-    </div>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>DoG(x)</figcaption>
-            <img src="./images/filter_img/cameraman_DoG_dx.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>DoG(y)</figcaption>
-            <img src="./images/filter_img/cameraman_DoG_dy.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Gradient magnitude</figcaption>
-            <img src="./images/filter_img/cameraman_DoG_mag.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Binarized with threshold=0.1</figcaption>
-            <img src="./images/filter_img/cameraman_DoG_bin.jpg"">
-        </figure>
-    </div>
-    <div class="tab"></div>
+    <img src="./images/filter_img/DoG_x.jpg" width="40%" style="padding-left: 5%;">
+    <img src="./images/filter_img/DoG_y.jpg" width="40%" style="padding-left: 5%;">
+    <img src="./images/filter_img/cameraman_DoG_dx.jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cameraman_DoG_dy.jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cameraman_DoG_mag.jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cameraman_DoG_bin.jpg" width="23%" style="padding-left: 1%;">
+
+    <div class="end-interval"></div>
     <h2>Part 2 : Fun with Frequencies</h2>
-    <div class="tab"></div>
     <h2>Part 2.1 : Image "Sharpening"</h2>
     <p>To sharpen an image, we would like to add more high frequencies to the image. As Gaussian filter retains only the low frequencies, we can easily get the
         high frequencies of the image by subtracting the results from Gaussian filter from the original image. After getting the high frequencies, we simply add
@@ -119,49 +69,22 @@
     <p> Once again, due to the associativity of convolution operations, we can combine all these steps into one single convolution and this is the unsharp mask filter mentioned in lecture:</p>
     <h3>unsharp mask filter = (1 + alpha)*e - alpha*g, where e is the unit impulse; alpha is the coefficient we choose; and g is the Gaussian filter</h3>
     <h3>Note: "*" here is multiplication</h3>
-    <p>The sharpen version of the sample image and two other images I choose are below:</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/filter_img/taj.jpeg"">
-            <figcaption>Original</figcaption>
-            <img src="./images/filter_img/dog.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Sharpened, alpha=2.0</figcaption>
-            <img src="./images/filter_img/taj_sharpen.jpg">
-            <figcaption>Sharpened, alpha=2.0</figcaption>
-            <img src="./images/filter_img/dog_sharpen.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/filter_img/cat.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Sharpened, alpha=2.0</figcaption>
-            <img src="./images/filter_img/cat_sharpen.jpg"">
-        </figure>
-    </div>
-    <p>For evaluation, I also tried to blur a sharp image and then sharpen it again:</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>Original</figcaption>
-            <img src="./images/filter_img/watch.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Blur</figcaption>
-            <img src="./images/filter_img/watch_blur.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Sharpened after blur, alpha=2.0</figcaption>
-            <img src="./images/filter_img/watch_sharpen_after_blur.jpg">
-        </figure>
-    </div>
+    <p>The sharpen version of the sample image and two other images I choose are below (Left: Original, Right: Sharpen with alpha = 2.0):</p>
+    <img src="./images/filter_img/taj.jpeg" width="15%" style="padding-left: 1%;">
+    <img src="./images/filter_img/taj_sharpen.jpg" width="15%" style="padding-left: 1%;">
+    <img src="./images/filter_img/dog.jpg" width="15%" style="padding-left: 1%;">
+    <img src="./images/filter_img/dog_sharpen.jpg" width="15%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cat.jpg" width="15%" style="padding-left: 1%;">
+    <img src="./images/filter_img/cat_sharpen.jpg" width="15%" style="padding-left: 1%;">
+    <p>For evaluation, I also tried to blur a sharp image and then sharpen it again (Order: Original->Blur->Sharpen after blurring):</p>
+    <img src="./images/filter_img/watch.jpg" width="32%" style="padding-left: 1%;">
+    <img src="./images/filter_img/watch_blur.jpg" width="32%" style="padding-left: 1%;">
+    <img src="./images/filter_img/watch_sharpen_after_blur.jpg" width="32%" style="padding-left: 1%;">
     <p>From above, we can notice that the original image is much sharper than the one sharpened after blurring. This is reasonable and consistent with the intuition.
         When we apply the Gaussian filter on the original image, lots of details are removed during the process, and these details play an important role on sharpening
         the image. Thus, when we tried to sharpen it again, the result is much more ambiguous than the original one.
     </p>
-    <div class="tab"></div>
+    <div class="end-interval"></div>
     <h2>Part 2.2 : Hybrid images</h2>
     <p>From spec, "Hybrid images are static images that change in interpretation as a function of the view distance". The basic idea of it is combining the high frequency
         part of one image and the low frequency part of another image to get a hybrid image which leads to different interpretation depends on distance. Since high frequency
@@ -174,216 +97,86 @@
     </p>
     <h3>1.Adjust the sigma value of the Gaussian filters with some experiments to find the relatively appropriate sigma values.</h3>
     <h3>2.Tune the weights when blending the images: hybrid_image = 2 * w * high_freq + 2 * (1 - w) * low_freq, where w is in [0, 1] (Again, the "*" denotes multiplication)</h3>
-    <p>Below are inputs and outputs of sample images and other images I choose:</p>
+    <p>Below are inputs and outputs of sample images and other images I choose (Order: Image1->Image2->Image1_aligned->Image2_aligned->Result):</p>
     <h2>Sample images:</h2>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>nutmeg</figcaption>
-            <img src="./images/filter_img/nutmeg.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>DerekPicture</figcaption>
-            <img src="./images/filter_img/DerekPicture.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>nutmeg(aligned)</figcaption>
-            <img src="./images/filter_img/nutmeg(aligned).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>DerekPicture(aligned)</figcaption>
-            <img src="./images/filter_img/DerekPicture(aligned).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>nutmeg(high)+DerekPicture(low)</figcaption>
-            <img src="./images/filter_img/nutmeg+DerekPicture.jpg">
-        </figure>
-    </div>
+            <img src="./images/filter_img/nutmeg.jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/DerekPicture.jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/nutmeg(aligned).jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/DerekPicture(aligned).jpg" width="18%" style="padding-left: 1%;"> 
+            <img src="./images/filter_img/nutmeg+DerekPicture.jpg" width="18%" style="padding-left: 1%;">
     <h2>Images I choose:</h2>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>leopard</figcaption>
-            <img src="./images/filter_img/leopard.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>lion</figcaption>
-            <img src="./images/filter_img/lion.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>leopard(aligned)</figcaption>
-            <img src="./images/filter_img/leopard(aligned).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>lion(aligned)</figcaption>
-            <img src="./images/filter_img/lion(aligned).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>leopard(high)+lion(low)</figcaption>
-            <img src="./images/filter_img/leopard+lion.jpg">
-        </figure>
-    </div>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>elepant</figcaption>
-            <img src="./images/filter_img/elepant.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>mouse</figcaption>
-            <img src="./images/filter_img/mouse.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>elepant(aligned)</figcaption>
-            <img src="./images/filter_img/elepant(aligned).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>mouse(aligned)</figcaption>
-            <img src="./images/filter_img/mouse(aligned).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>elepant(high)+mouse(low)</figcaption>
-            <img src="./images/filter_img/elepant+mouse.jpg">
-        </figure>
-    </div>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>puppy</figcaption>
-            <img src="./images/filter_img/puppy.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>huskie</figcaption>
-            <img src="./images/filter_img/huskie.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>puppy(aligned)</figcaption>
-            <img src="./images/filter_img/puppy(aligned).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>huskie(aligned)</figcaption>
-            <img src="./images/filter_img/huskie(aligned).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>puppy(high)+huskie(low)</figcaption>
-            <img src="./images/filter_img/puppy+huskie.jpg">
-        </figure>
-    </div>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>tiger</figcaption>
-            <img src="./images/filter_img/tiger.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>car</figcaption>
-            <img src="./images/filter_img/car.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>tiger(aligned)</figcaption>
-            <img src="./images/filter_img/tiger(aligned).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>car(aligned)</figcaption>
-            <img src="./images/filter_img/car(aligned).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>tiger(high)+car(low)</figcaption>
-            <img src="./images/filter_img/tiger+car.jpg">
-        </figure>
-    </div>
+            <img src="./images/filter_img/leopard.jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/lion.jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/leopard(aligned).jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/lion(aligned).jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/leopard+lion.jpg" width="18%" style="padding-left: 1%;">
+
+            <img src="./images/filter_img/elepant.jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/mouse.jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/elepant(aligned).jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/mouse(aligned).jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/elepant+mouse.jpg" width="18%" style="padding-left: 1%;">
+
+            <img src="./images/filter_img/puppy.jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/huskie.jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/puppy(aligned).jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/huskie(aligned).jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/puppy+huskie.jpg" width="18%" style="padding-left: 1%;">
+
+            <img src="./images/filter_img/tiger.jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/car.jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/tiger(aligned).jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/car(aligned).jpg" width="18%" style="padding-left: 1%;">
+            <img src="./images/filter_img/tiger+car.jpg" width="18%" style="padding-left: 1%;">
+
     <p>From above, we can see the most of results are good, but the last one, "tiger and car", looks weird. The failure of this group of image is mainly because of
         the bad alignment. As these two objects (tiger and car) have very distinct outline, it is very hard to find appropriate 
         points to align them. In this case, the hybrid image of them looks much worse than other groups.
     </p>
     <p>For other three pairs of images I choose, I like "leopard and lion" the most, so I illustrate the process through frequency analysis for it below:</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>leopard(aligned)</figcaption>
-            <img src="./images/filter_img/leopard(aligned).jpg">
-            <img src="./images/filter_img/ft_im1.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>lion(aligned)</figcaption>
-            <img src="./images/filter_img/lion(aligned).jpg">
-            <img src="./images/filter_img/ft_im2.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>high frequencies</figcaption>
-            <img src="./images/filter_img/leopard_high.jpg">
-            <img src="./images/filter_img/ft_im_high.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>low frequencies</figcaption>
-            <img src="./images/filter_img/lion_low.jpg">
-            <img src="./images/filter_img/ft_im_low.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>leopard(high)+lion(low)</figcaption>
-            <img src="./images/filter_img/leopard+lion.jpg">
-            <img src="./images/filter_img/ft_im_hybrid.jpg">
-        </figure>
-    </div>
-    <div class="tab"></div>
+            <img src="./images/filter_img/leopard(aligned).jpg" width="23%" style="padding-left: 1%;">
+            <img src="./images/filter_img/ft_im1.jpg" width="23%" style="padding-left: 1%;">
+            <img src="./images/filter_img/lion(aligned).jpg" width="23%" style="padding-left: 1%;">
+            <img src="./images/filter_img/ft_im2.jpg" width="23%" style="padding-left: 1%;">
+            <img src="./images/filter_img/leopard_high.jpg" width="23%" style="padding-left: 1%;">
+            <img src="./images/filter_img/ft_im_high.jpg" width="23%" style="padding-left: 1%;">
+            <img src="./images/filter_img/lion_low.jpg" width="23%" style="padding-left: 1%;">
+            <img src="./images/filter_img/ft_im_low.jpg" width="23%" style="padding-left: 1%;">
+            <img src="./images/filter_img/leopard+lion.jpg" width="23%" style="padding-left: 1%;">
+            <img src="./images/filter_img/ft_im_hybrid.jpg" width="23%" style="padding-left: 1%;">
+    <div class="end-interval"></div>
     <h2>Part 2.3 : Gaussian and Laplacian Stacks</h2>
     <p>For this part, I am going to implement Gaussian and Laplacian stacks for the multi-resolution blending in next part. Gaussian stack is just the Gaussian
         pyramid without downsampling. To get the Laplacian image for each level, we just need to subtract the Gaussian image at that level from the one at the 
         last level (i.e. Laplacian stack level 1 = Gaussian stack level 1 - Gaussian stack level 0). In addition, different from the Gaussian pyramid,
         I use the same Gaussian filter in an auto-regressive fashion (after asking TA on piazza) instead of double the filter's kernel size each level.
     </p>
-    <p>Below are the results got by applying my stack function to Oraple and recreate the outcomes in textbook (the details of blending approach will be explained in part 2.4):</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>apple masked level 0</figcaption>
-            <img src="./images/filter_img/applemasked0.jpg"">
-            <figcaption>apple masked level 2</figcaption>
-            <img src="./images/filter_img/applemasked2.jpg"">
-            <figcaption>apple masked level 4</figcaption>
-            <img src="./images/filter_img/applemasked4.jpg"">
-            <figcaption>apple masked</figcaption>
-            <img src="./images/filter_img/applemasked.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>orange masked level 0</figcaption>
-            <img src="./images/filter_img/orangemasked0.jpg">
-            <figcaption>orange masked level 2</figcaption>
-            <img src="./images/filter_img/orangemasked2.jpg">
-            <figcaption>orange masked level 4</figcaption>
-            <img src="./images/filter_img/orangemasked4.jpg">
-            <figcaption>orange masked</figcaption>
-            <img src="./images/filter_img/orangemasked.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>blending level 0</figcaption>
-            <img src="./images/filter_img/oraple0.jpg">
-            <figcaption>blending level 2</figcaption>
-            <img src="./images/filter_img/oraple2.jpg">
-            <figcaption>blending level 4</figcaption>
-            <img src="./images/filter_img/oraple4.jpg">
-            <figcaption>Final blending: oraple</figcaption>
-            <img src="./images/filter_img/oraple.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>apple masked level 1</figcaption>
-            <img src="./images/filter_img/applemasked1.jpg"">
-            <figcaption>apple masked level 3</figcaption>
-            <img src="./images/filter_img/applemasked3.jpg"">
-            <figcaption>apple masked level 5</figcaption>
-            <img src="./images/filter_img/applemasked5.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>orange masked level 1</figcaption>
-            <img src="./images/filter_img/orangemasked1.jpg">
-            <figcaption>orange masked level 3</figcaption>
-            <img src="./images/filter_img/orangemasked3.jpg">
-            <figcaption>orange masked level 5</figcaption>
-            <img src="./images/filter_img/orangemasked5.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>blending level 1</figcaption>
-            <img src="./images/filter_img/oraple1.jpg">
-            <figcaption>blending level 3</figcaption>
-            <img src="./images/filter_img/oraple3.jpg">
-            <figcaption>blending level 5</figcaption>
-            <img src="./images/filter_img/oraple5.jpg">
-        </figure>
-    </div>
-    <div class="tab"></div>
+    <p>Below are the results got by applying my stack function to Oraple and recreate the outcomes in textbook (Order: from lower to higher level):</p>
+            <img src="./images/filter_img/applemasked0.jpg" width="14%">
+            <img src="./images/filter_img/applemasked1.jpg" width="14%">
+            <img src="./images/filter_img/applemasked2.jpg" width="14%">
+            <img src="./images/filter_img/applemasked3.jpg" width="14%">
+            <img src="./images/filter_img/applemasked4.jpg" width="14%">
+            <img src="./images/filter_img/applemasked5.jpg" width="14%">
+            <img src="./images/filter_img/applemasked.jpg" width="14%">
+
+            <img src="./images/filter_img/orangemasked0.jpg" width="14%">
+            <img src="./images/filter_img/orangemasked1.jpg" width="14%">
+            <img src="./images/filter_img/orangemasked2.jpg" width="14%">
+            <img src="./images/filter_img/orangemasked3.jpg" width="14%">
+            <img src="./images/filter_img/orangemasked4.jpg" width="14%">
+            <img src="./images/filter_img/orangemasked5.jpg" width="14%">
+            <img src="./images/filter_img/orangemasked.jpg" width="14%">
+
+            <img src="./images/filter_img/oraple0.jpg" width="14%">
+            <img src="./images/filter_img/oraple1.jpg" width="14%">
+            <img src="./images/filter_img/oraple2.jpg" width="14%">
+            <img src="./images/filter_img/oraple3.jpg" width="14%">
+            <img src="./images/filter_img/oraple4.jpg" width="14%">
+            <img src="./images/filter_img/oraple5.jpg" width="14%">
+            <img src="./images/filter_img/oraple.jpg" width="14%">
+                             
+    <div class="end-interval"></div>
     <h2>Part 2.4 : multi-resolution Blending</h2>
     <p>This is the final part for this project. In this part, I'm going to blend a couple of images by "pyramid" blending with the help from the stack function I build in
         part 2.3. I use "pyramid" instead of pyramid since I actually use stack here. As described in lecture, the general approach looks like this:
@@ -401,99 +194,35 @@
         samller than 1), I will then traverse through that image and find all indexes having pixel values smaller than 0.95 and set the corresponding indexes in the mask to 1.
     </p>
     <p>Below are the results from sample images and images I choose (including two inputs + mask/the region selected + blending result) :</p>
-    <h2>Sample images: (Oraple)</h2>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>mask</figcaption>
-            <img src="./images/filter_img/oraplemask.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>oraple</figcaption>
-            <img src="./images/filter_img/oraple.jpg"">
-        </figure>
-    </div>
     <h2>Images I choose:</h2>
     <p>(for the iris image, I first add paddings to it to make it the same size as blackhole image)</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>iris</figcaption>
-            <img src="./images/filter_img/iris.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>blackhole</figcaption>
-            <img src="./images/filter_img/blackhole.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>mask</figcaption>
-            <img src="./images/filter_img/blackirismask.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>blackiris</figcaption>
-            <img src="./images/filter_img/blackiris.jpg"">
-        </figure>
-    </div>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>little cat</figcaption>
-            <img src="./images/filter_img/littlecat.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>spiderman</figcaption>
-            <img src="./images/filter_img/spiderman.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>mask</figcaption>
-            <img src="./images/filter_img/spidercatmask.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>spidercat</figcaption>
-            <img src="./images/filter_img/spidercat.jpg"">
-        </figure>
-    </div>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>ironman</figcaption>
-            <img src="./images/filter_img/ironman.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>tony</figcaption>
-            <img src="./images/filter_img/tony.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>mask</figcaption>
-            <img src="./images/filter_img/irontonymask.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>irontony</figcaption>
-            <img src="./images/filter_img/irontony.jpg"">
-        </figure>
-    </div>
-    <div class="tab"></div>
+            <img src="./images/filter_img/iris.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/blackhole.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/blackirismask.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/blackiris.jpg" width="23%" style="padding-left: 1%">
+
+            <img src="./images/filter_img/littlecat.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/spiderman.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/spidercatmask.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/spidercat.jpg" width="23%" style="padding-left: 1%">
+
+            <img src="./images/filter_img/ironman.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/tony.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/irontonymask.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/irontony.jpg" width="23%" style="padding-left: 1%">
+
+    <div class="end-interval"></div>
     <h2>Bells & Whistles:</h2>
     <p>For Bells & Whistles, I added color to part 2.4 and got the colored blending. To add color to the results, I just split the colored input images at the beginning, and took each
         of the channels as a single image and blended them respectively using the same techinque when dealing with the gray-scale image above. Then, after completing the blending of all 3 channels, 
         I combined them together at the end to get the colored results. From the results, I felt the adding color definitely enhanced the effect a lot.
     </p>
     <p>Below are the colored results for each blending in part 2.4:</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>oraple</figcaption>
-            <img src="./images/filter_img/oraple_color.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>blackiris</figcaption>
-            <img src="./images/filter_img/blackiris_color.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>spidercat</figcaption>
-            <img src="./images/filter_img/spidercat_color.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>irontony</figcaption>
-            <img src="./images/filter_img/irontony_color.jpg"">
-        </figure>
-    </div>
-    <div class="tab"></div>
+            <img src="./images/filter_img/oraple_color.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/blackiris_color.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/spidercat_color.jpg" width="23%" style="padding-left: 1%">
+            <img src="./images/filter_img/irontony_color.jpg" width="23%" style="padding-left: 1%">
+    <div class="end-interval"></div>
     <h2>Conclusion:</h2>
     <p>In overall, I learned a lot and had a lof of fun by doing this project. The most interesting thing I learned from it should be the hybrid image and
         the multi-resolution blending. It's amazing that a static image can have completely different views depends on the distance. Through this, I understood
@@ -501,7 +230,9 @@
         Also, the blending of "blackiris" and "irontony" were pretty cool, too. 
     </p>
     <div class="end"></div>
-    <a href="./projects.html"><h1>BACK</h1></a>
+    <a href="./projects.html"><h3>BACK</h3></a>
+
+    <div class="end-interval"></div>
 </body>
 
 </html>

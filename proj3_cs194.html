@@ -1,13 +1,14 @@
 <html>
 <meta name="viewport" content="width=device-widh, initial-scale=1">
 <head>
-    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="style_projects_page.css">
 </head>
 <body>
     <div class="dropdown">
         <button class="dropbtn">MENU</button>
         <div class="dropdown-content">
             <a href="./index.html">home page</a>
+            <a href="./about.html">about</a>
             <a href="./coursework.html">coursework</a>
             <a href="./projects.html">projects</a>
             <a href="./experience.html">experience</a>
@@ -20,34 +21,21 @@
         for the second half, I am going to compute the mean of a population's faces and extrapolate from that mean to create a caricature of myself. It's further divided
         into 5 parts and 1 additional part for Bells and Whistles: 1) Defining correspondence points and construct the triangulation, 2) Compute the "mid-way face" 
         between my face and my friend's face, 3) Creating the morph sequence and generate the gif with 45 frames of animation, 4) Compute the "mean face" of a population
-        based on database given on website, 5) Extrapolating from the mean to create caricature of myself, and 6) Music video + Change Gender.
+        based on daend-intervalase given on website, 5) Extrapolating from the mean to create caricature of myself, and 6) Music video.
     </p>
+    <div class="end-interval"></div>
     <h2>Part 1 : Defining Correspondences</h2>
-    <div class="tab"></div>
     <p> To start with, I first select 26 keypoints from each input image: my face and my friend's face manually using the ginput() function from matplot library and then
         compute the mean of the two point sets. Then, I used the mean of point sets computed to construct the triangulation mesh for morphing using Delaunay() function from the
         scipy library. The Delaunay() function worked pretty well as it would not produce overly skinny triangles.
     </p>
     <p>Below are the facial keypoints and triangulation I generated:</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>my face</figcaption>
-            <img src="./images/morph_img/points1.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>my friend's face</figcaption>
-            <img src="./images/morph_img/points2.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>my face</figcaption>
-            <img src="./images/morph_img/triangulation1.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>my friend's face</figcaption>
-            <img src="./images/morph_img/triangulation2.jpg"">
-        </figure>
-    </div>
-    <div class="tab"></div>
+        <img src="./images/morph_img/points1.jpg" width="24%">
+        <img src="./images/morph_img/points2.jpg" width="24%">
+        <img src="./images/morph_img/triangulation1.jpg" width="24%">
+        <img src="./images/morph_img/triangulation2.jpg" width="24%">
+
+    <div class="end-interval"></div>
     <h2>Part 2 : Computing the "Mid-way Face"</h2>
     <p>Next, I am going to compute a mid-way face of my face and my friend's face and the steps are:</p>
     <h3>1.Compute the average shape. For this, I just reuse the mean point set computed in part 1.</h3>
@@ -66,23 +54,13 @@
     </h3>
     <h3>4.Finally, I just combine two warped faces I get by the steps above with dissolve_frac = 0.5 as I am going to compute the "Mid-way Face".</h3>
     <p>Below are the original image of my face, the "Mid-way Face" and the original image of my friend's face:</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>my face, orignial image1</figcaption>
-            <img src="./images/morph_img/mypicture.jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>"Mid-way Face"</figcaption>
-            <img src="./images/morph_img/midway.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>my friend's face, orignal image2</figcaption>
-            <img src="./images/morph_img/myfriend.jpg">
-        </figure>
-    </div>
-    <div class="tab"></div>
+        <img src="./images/morph_img/mypicture.jpg" width="15%" style="padding-left: 12%;">
+        <img src="./images/morph_img/midway.jpg" width="15%" style="padding-left: 12%;">
+        <img src="./images/morph_img/myfriend.jpg" width="15%" style="padding-left: 12%;">
+
+    <div class="end-interval"></div>
     <h2>Part 3 : The Morph Sequence</h2>
-    <div class="tab"></div>
+    <div class="end-interval"></div>
     <p>Now, after completing the implementations of computing affine matrix and inverse warping the image, the morph() function is very straightforward to implement. In part 2,
         I create the "Mid-way face" by warping both of faces to the average shape, so the warp_frac I use here is 0.5. To generate a sequence, we just need to change the warp_frac
         over time to warp the image in different shapes and with different colors depending on the dissolve_frac chosen. To get a sequence of a morph from my face to my friend's face,
@@ -92,10 +70,10 @@
     <p>In addition, to make the result more pleasing to eyes, I append 45 frames in a reverse order to the original 45 frames to generate a two way animation: from my face to
         my friend's face and then back to my face.
     </p>
-    <div style="text-align: center;"><img src="./images/morph_img/me_and_myfriend_2way.gif"></a>
+    <div style="text-align: center;"><img src="./images/morph_img/me_and_myfriend_2way.gif" width="15%"></a>
 
     <h2>Part 4 : The "Mean Face" Of a Population</h2>
-    <p>Let's compute the "Mean Face" of a population! To start with, I downloaded images and keypoint sets from <a href="https://fei.edu.br/~cet/facedatabase.html">FEI Face Database</a>.
+    <p>Let's compute the "Mean Face" of a population! To start with, I downloaded images and keypoint sets from <a href="https://fei.edu.br/~cet/facedaend-intervalase.html">FEI Face Daend-intervalase</a>.
         (images are the nomralized ones: frontalimages_spatiallynormalized_part1 and frontalimages_spatiallynormalized_part2). Then,
     </p>
     <h3>1.Compute the average face shape of the whole population. I first compute the average face shape of 200 neutral faces and 200 smiling faces separately. 
@@ -106,124 +84,34 @@
         the steps left are the same as the ones in first 3 parts (morph my face to my friend's face) above. Below are some pairs of the original face and the morphed face:
     </h3>
     <h3>3.Compute the average face of the population. Using the results from the second step, the average face can be computed easily.</h3>
-    <p>Below are the results I get for neutral faces and simle faces respectively:</p>
-    <div class="imageblock2">
-        <figure class="aboutimage">
-            <figcaption>Neutral</figcaption>
-            <img src="./images/morph_img/avg_neutral_face.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Smile</figcaption>
-            <img src="./images/morph_img/avg_smile_face.jpg">
-        </figure>
-    </div>
+    <p>Below are the results I get for neutral faces and simle faces respectively (Left: neutral, Right: smile):</p>
+        <img src="./images/morph_img/avg_neutral_face.jpg" width="15%" style="padding-left: 5%;">
+        <img src="./images/morph_img/avg_smile_face.jpg" width="15%" style="padding-left: 15%;">
     <h3>4.Finally, I reslect 42 keypoints on each image and warp my face to each of the average face and vice versa.</h3>
     <p>Reselect Keypoints:</p>
-    <div class="imageblock2">
-        <figure class="aboutimage">
-            <figcaption>my face</figcaption>
-            <img src="./images/morph_img/part4_mypoints.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>neutral avg face</figcaption>
-            <img src="./images/morph_img/part4_avgfacepoints1.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>smile avg face</figcaption>
-            <img src="./images/morph_img/part4_avgfacepoints2.jpg">
-        </figure>
-    </div>
-    <p>Results:</p>
-    <div class="imageblock2">
-        <figure class="aboutimage">
-            <figcaption>my face</figcaption>
-            <img src="./images/morph_img/myface.jpg">
-            <figcaption>my face</figcaption>
-            <img src="./images/morph_img/myface.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>my face to neutral average face</figcaption>
-            <img src="./images/morph_img/me_to_avgface1.jpg">
-            <figcaption>my face to smile average face</figcaption>
-            <img src="./images/morph_img/me_to_avgface2.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>neutral average face to my face</figcaption>
-            <img src="./images/morph_img/avgface_to_me1.jpg">
-            <figcaption>smile average face to my face</figcaption>
-            <img src="./images/morph_img/avgface_to_me2.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>netural average face</figcaption>
-            <img src="./images/morph_img/avg_neutral_face.jpg">
-            <figcaption>smile average face</figcaption>
-            <img src="./images/morph_img/avg_smile_face.jpg">
-        </figure>
-    </div>
-    <p>From "my face to smile average face" and "smile average face to my face", we can see that the whole face especially the part of mouse changes apparently:
-        while my face changes from neutral to smile, the average face changes from smile to neutral.
-    </p>
+        <img src="./images/morph_img/part4_mypoints.jpg" width="15%" style="padding-left: 12%;">
+        <img src="./images/morph_img/part4_avgfacepoints1.jpg" width="15%" style="padding-left: 12%;">
+        <img src="./images/morph_img/part4_avgfacepoints2.jpg" width="15%" style="padding-left: 12%;">
+
+    <div class="end-interval"></div>
     <h2>Part 5 : Caricatures, Extrapolating From The Mean</h2>
     <p>At the end, I produce a caricature of my face by extrapolating form two characteristic population means I compute in last part (neutral and smile face).
         I first calculate the deviation by subtracting the shape of mean from the shape of my face and then get a new shape to warp by adding my face's shape
         and alpha * deviation where alpha decides the final effects of the deviation.
     </p>
-    <p>We can see that as the value of alpha becomes larger, the results become more exaggerated.</p>
-    <div class="imageblock2">
-        <figure class="aboutimage">
-            <figcaption>neutral, alpha=0.2</figcaption>
-            <img src="./images/morph_img/caricature_neutral0.2.jpg">
-            <figcaption>smile, alpha=0.2</figcaption>
-            <img src="./images/morph_img/caricature_smile0.2.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>neutral, alpha=0.6</figcaption>
-            <img src="./images/morph_img/caricature_neutral0.6.jpg">
-            <figcaption>smile, alpha=0.6</figcaption>
-            <img src="./images/morph_img/caricature_smile0.6.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>neutral, alpha=1.0</figcaption>
-            <img src="./images/morph_img/caricature_neutral1.0.jpg">
-            <figcaption>smile, alpha=1.0</figcaption>
-            <img src="./images/morph_img/caricature_smile1.0.jpg">
-        </figure>
-    </div>
 
+    <div class="end-interval"></div>
     <h2>Bells and Whistles</h2>
     <h2>Morphing Music Video</h2>
     <p>I produce a music video about players in a Chinese League of Legends eSports team to wish they can do well in the upcoming World Championships.
         I morph each of the players to the characters in the game they play very often and use <a href="https://www.youtube.com/watch?v=4Q46xYqUwZQ">Legneds Never Die</a> as BGM.
     </p>
-
     <h3><a href="https://www.youtube.com/watch?v=9UoB5e77F1E">Click here to watch the video on Youtube</a></h3>
 
-    <h2>Change Gender</h2>
-    <p>Then, I also download an Asian women average face from web and try to morph my face to it.</p>
-    <div class="imageblock2">
-        <figure class="aboutimage">
-            <figcaption>my face</figcaption>
-            <img src="./images/morph_img/myface2.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>morph shape only</figcaption>
-            <img src="./images/morph_img/shape_morphed.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>morph appearance only</figcaption>
-            <img src="./images/morph_img/appearance_morphed.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>both</figcaption>
-            <img src="./images/morph_img/both_morphed.jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>Asian women average face from web</figcaption>
-            <img src="./images/morph_img/women_avg_face.jpg">
-        </figure>
-    </div>
-    <div class="end"></div>
-    <a href="./projects.html"><h1>BACK</h1></a>
+    <div class="end-interval"></div>
+    <a href="./projects.html"><h3>BACK</h3></a>
+
+    <div class="end-interval"></div>
 </body>
 
 </html>

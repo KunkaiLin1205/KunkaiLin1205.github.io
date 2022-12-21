@@ -1,0 +1,320 @@
+<html>
+<meta name="viewport" content="width=device-widh, initial-scale=1">
+<head>
+    <link rel="stylesheet" href="style_projects_page.css">
+</head>
+<body>
+    <div class="dropdown">
+        <button class="dropbtn">MENU</button>
+        <div class="dropdown-content">
+            <a href="./index.html">home page</a>
+            <a href="./about.html">about</a>
+            <a href="./coursework.html">coursework</a>
+            <a href="./projects.html">projects</a>
+            <a href="./experience.html">experience</a>
+        </div>
+    </div>
+    <h1>CS 194-26 : Project 5 -- Facial Keypoint Detection with Neural Networks</h1>
+    <h1>Kunkai Lin</h1>
+    <h2>Overview</h2>
+    <p>In this project, we will train and use neural networks to automatically detect facial keypoints in given images. In detail, the project will be
+        mainly divided into 6 parts. Firstly, we will use IMM Face Daend-intervalase (240 images for training and validation) to train 1) a model to detect nose 
+        tip and 2) a model to dectect full facial keypoints. Then, we go to use a larger daend-intervalase provided: IBUG Face Daend-intervalase (6666 images for training 
+        and validation, and 1008 images for testing), to train 3) a model for facial keypoints detector with predefined RestNet. After that, 4) we use the same daend-intervalase
+        but turn the keypoints coordinates into a pixelwise classification problem and train the model with a netural network architecture that outputs 
+        pixel-aligned heatmaps. Then, 5) I use the model (from part 3 or 4) to predict the facial keypoints for the images in testing dataset and submit the
+        results to Kaggle. Finally, 6) for Bells and Whistles, I integrate the facial keypoint detection model with the techniques we used in face morphing
+        project to get a system producing face morphing gif automatically without manually selecting pairs of keypoints on input images.
+    </p>
+    <div class="end-interval"></div>
+    <h2>Part 1 : Nose Tip Detection</h2>
+    <p> To start with, we first download the data needed from 
+        <a href="https://web.archive.org/web/20210305094647/http://www2.imm.dtu.dk/~aam/datasets/datasets.html">IMM Face Daend-intervalase</a>
+        and write a custom dataloader to load both the images in grayscale and their corresponding nose keypoint coordinates with a batch size of 1
+        (80% for training and 20% for validation).
+        Then, I convert image pixel values in uint8 from 0 to 255, to normalized float values in range -0.5 to 0.5 and resize the image
+        into samller size: 80x60. Below are some sampled images from the the training dataloader.
+    </p>
+    <h2>Sampled image from the dataloader visualized with ground-truth keypoints:</h2>
+    <img src="./images/nn_img/nose_ground-truth.jpg" width="100%">
+    <p>Then, I design a CNN, Net_Nose1, as follows:</p>
+    <h3>Net_Nose1</h3>
+    <h3>Conv1 - 1 input channel, 10 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <h3>Conv2 - 10 input channels, 20 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <h3>Conv3 - 20 input channels, 26 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <h3>Conv4 - 26 input channels, 32 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <div class="end-interval"></div>
+    <h3>Linear - 96 inputs, 48 outputs</h3>
+    <h3>ReLU</h3>
+    <h3>Linear - 48 inputs, 2 outputs</h3>
+    <p>and learning rate, number of epochs, loss function and optimizer I choose are: </p>
+    <h3>Learning rate =  1e-3</h3>
+    <h3>epochs : 25</h3>
+    <h3>Loss function : mean squared error loss (torch.nn.MSELoss)</h3>
+    <h3>Optimizer : Adam (torch.optim.Adam)</h3>
+    <p>In addition, for hyperparameter tuning, I also try lr = 1e-4 and lr = 0.01.
+        Below are the plots for training and validation MSE loss for each of them.</p>
+    <h2>Training and validation MSE loss with hyperparameter tuning on learning rate:</h2>
+    <img src="./images/nn_img/loss_0.001_Net_Nose1.jpg" width="33%">
+    <img src="./images/nn_img/loss_0.0001_Net_Nose1.jpg" width="33%">
+    <img src="./images/nn_img/loss_0.01_Net_Nose1.jpg" width="33%">
+    <p>From above, we can see that different learning rates definitely affect the results and the speed of convergence for training and validation loss. While
+        the plot for lr = 1e-4 converges very fast but stops at some points, the plots for lr = 1e-3 and 0.01 are more fluctuated.
+    </p>
+    <p>Besides tuning the learing rate, I also try another CNN, Net_Nose2, with different architectures:</p>
+    <h3>Net_Nose2</h3>
+    <h3>Conv1 - 1 input channel, 12 output channels, 5x5 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <h3>Conv2 - 12 input channels, 24 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <h3>Conv3 - 24 input channels, 32 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <h3>Conv4 - 32 input channels, 16 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <div class="end-interval"></div>
+    <h3>Linear - 48 inputs, 20 outputs</h3>
+    <h3>ReLU</h3>
+    <h3>Linear - 20 inputs, 2 outputs</h3>
+    <p>and use the same loss function, optimizer and number of epochs with lr = 1e-3, 1e-4, 0.01 respectively. Below are the plots.</p>
+    <h2>Training and validation MSE loss using another neural network architecture:</h2>
+    <img src="./images/nn_img/loss_0.001_Net_Nose2.jpg" width="33%">
+    <img src="./images/nn_img/loss_0.0001_Net_Nose2.jpg" width="33%">
+    <img src="./images/nn_img/loss_0.01_Net_Nose2.jpg" width="33%">
+    <p>From above, we can see different architectures of neural network will also bring some different results, and Net_Nose1 performs slightly better than
+        Net_Nose2 above in overall, so I finally use Net_Nose1 with lr = 1e-3 to predict the nose keypoint for images in validation set. Below are 2 successful cases
+        and 2 failed case.
+    </p>
+    <h2>2 facial images the network detecting the nose correctly:(green is ground-truth, red is prediction)</h2>
+    <img src="./images/nn_img/nose_prediction5.jpg" width="30%" style="padding-left:10%;">
+    <img src="./images/nn_img/nose_prediction6.jpg" width="30%" style="padding-left:10%;">
+    <h2>2 facial images the network detecting the nose incorrectly:(green is ground-truth, red is prediction)</h2>
+    <img src="./images/nn_img/nose_prediction2.jpg" width="30%" style="padding-left:10%;"> 
+    <img src="./images/nn_img/nose_prediction4.jpg" width="30%" style="padding-left:10%;">
+    <p>From above, we can see that the detection works well for the faces which are positioned at image's center and looking straight forward, but for the faces turning around,
+        the networks performs poorly. I think this could be caused by the overfitting as the daend-intervalase for training here is very small and most of images
+        having faces at center and looking straight forward. In this case, it'll be easier for the network to detect nose tip for these images. To improve
+        the performance of network, we can do some data augmentations on the data before training.
+    </p>
+    <div class="end-interval"></div>
+    <h2>Part 2 : Full Facial Keypoints Detection</h2>
+    <p>Next, we are going to train a model to detect full facial keypoints instead of just the nose tip. First, we do similar steps to load the data with a batch size of 8
+        but what being different this time are: we're now resizing images to 240x180 instead of 80x60 and loading all landmarks instead of only the nose 
+        keypoint. After loading all the data, we also need to do some data augmentations this time to prevent the model from overfitting as much as 
+        possible. What I've done here are randomly shift each image and its landmarks for -10 to 10 pixels and then randomly rotate them for -15 to 
+        15 degrees. Below are some sampled images from the dataloader.
+    </p>
+    <h2>Sampled image from the dataloader visualized with ground-truth keypoints:</h2>
+    <img src="./images/nn_img/face_ground-truth.jpg" width="100%">
+    <p>Then, we need more convolution layers for the model, so I design a new CNN, Net_Face, as follows:</p>
+    <h3>Net_Face</h3>
+    <h3>Conv1 - 1 input channel, 6 output channels, 7x7 kernel, stride=1</h3>
+    <h3>ReLU</h3>
+    <h3>Conv2 - 6 input channels, 12 output channels, 5x5 kernel, stride=1</h3>
+    <h3>ReLU</h3>
+    <h3>Conv3 - 12 input channels, 18 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU</h3>
+    <h3>Conv4 - 18 input channels, 20 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <h3>Conv5 - 20 input channels, 24 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <h3>Conv4 - 24 input channels, 32 output channels, 3x3 kernel, stride=1</h3>
+    <h3>ReLU -> MaxPool - 2x2 pooling</h3>
+    <div class="end-interval"></div>
+    <h3>Linear - 15808 inputs, 1976 outputs</h3>
+    <h3>ReLU</h3>
+    <h3>Linear - 1976 inputs, 116 outputs</h3>
+    <p>and learning rate, number of epochs, loss function, optimizer I choose are: </p>
+    <h3>Learning rate =  1e-5</h3>
+    <h3>Epochs : 25</h3>
+    <h3>Loss function : mean squared error loss (torch.nn.MSELoss)</h3>
+    <h3>Optimizer : Adam (torch.optim.Adam)</h3>
+    <p>Below is the plot of training and validation MSE loss.
+    </p>
+    <h2>Training and validation MSE loss:</h2>
+    <img src="./images/nn_img/loss_1e-05_Net_Face.jpg" style="padding-left: 30%;";">
+    <p>Similarly, I then apply the model on some images in validation set, and 2 successful/failed results are shown below.</p>
+    <h2>2 facial images the network detecting the facial keypoints correctly:(green is ground-truth, red is prediction)</h2>
+    <img src="./images/nn_img/face_prediction11.jpg" width="30%" style="padding-left:10%;">
+    <img src="./images/nn_img/face_prediction15.jpg" width="30%" style="padding-left:10%;">
+    <h2>2 facial images the network detecting the facial keypoints incorrectly:(green is ground-truth, red is prediction)</h2>
+    <img src="./images/nn_img/face_prediction4.jpg" width="30%" style="padding-left:10%;">
+    <img src="./images/nn_img/face_prediction14.jpg" width="30%" style="padding-left:10%;">
+    <p>From above, we can notice that the case here is very similar with the one we see in part 1: the model performs well for 
+        the faces at image's center and does poorly otherwise. I think the reason here can still be the overfitting. Although we've
+        done some data augmentations this time, it's not enough as the daend-intervalase here is too small. To improve the model, we need
+        a larger daend-intervalase such as the one in part 3 and 4 or apply more data augmentations.
+    </p>
+    <p>To have a better understanding about how the network works, we can also visualize the learned filters in each layer of the model.
+        Below, I visualize the learned filers in the first and second convolution layer which are 7x7 and 5x5 respectively.
+    </p>
+    <h2>Visualize learned filters:</h2>
+    <h2>Conv1 learned filters</h2>
+    <img src="./images/nn_img/learned_filters_conv1.jpg" width="80%" style="padding-left: 10%;">
+    <h2>Conv2 learned filters</h2>
+    <img src="./images/nn_img/learned_filters_conv2.jpg" width="80%" style="padding-left: 10%;">
+
+    <div class="end-interval"></div>
+    <h2>Part 3 : Train With Larger Dataset</h2>
+    <p>Now, we're going to train with a much larger dataset downloaded from 
+        <a href="https://drive.google.com/file/d/1pWVDpgAHygKpNtAvfr8boF-WiU60mrVn/view?usp=sharing">IBUG Face</a>.
+        Similarly, we need to customize a dataset for it and preprocess the data as before and with a batch size of 32 this time. The difference here is now
+        we need to crop each image with the bonding box given in dataset and then resize the cropped image to 224x224. Some bonding
+        boxes given have negative values. In this case, I fix it by using 0 for left and top values if they are negative. 
+        In addition, the landmarks given this time are not ratio values, so we need to convert them to ratio values before training.
+        (we can easily convert back to absolute values later with the values in bonding box) Then, again, after cropping and resizing, we randomly
+        shift and rotate the images in the same way in part 2. Below are some sampled images from the dataloader and we can
+        see the cropping and other data augmentations work pretty well.
+    </p>
+    <h2>Sampled image from the dataloader visualized with ground-truth keypoints:</h2>
+    <img src="./images/nn_img/sampled_img_1.jpg" width="24%">
+    <img src="./images/nn_img/sampled_img_2.jpg" width="24%">
+    <img src="./images/nn_img/sampled_img_3.jpg" width="24%">
+    <img src="./images/nn_img/sampled_img_4.jpg" width="24%">
+    <p>As mentioned before, we're going to use a standard CNN model pretrained and ResNet18 is suggested. Thus, we can just import
+        the predefined ResNet18 and modify the first input layer and last output layer of it to make it consistent with our dataset:
+        1 input channel for the first input layer and 68 * 2 outputs for the last output layer. The detailed architecture of the
+        network modified is shown below.
+    </p>
+    <h2>ResNet18 (modified the first and last layer):</h2>
+    <img src="./images/nn_img/resnet18_part3.jpg" style="padding-left: 30%;">
+    <p>and learning rate, number of epochs, loss function, optimizer I choose are: </p>
+    <h3>Learning rate =  1e-4</h3>
+    <h3>Epochs : 25</h3>
+    <h3>Loss function : mean squared error loss (torch.nn.MSELoss)</h3>
+    <h3>Optimizer : Adam (torch.optim.Adam)</h3>
+    <p>Besides these above, I also implement some techniques to prevent overfitting including using decay learning rate and decay weight:</p>
+    <h3>For decay learning rate, I use torch.optim.lr_scheduler.ExponentialLR with gamma = 0.8 so that for each epoch: {lr_new} = 0.8 * {lr_last_epoch}</h3>
+    <h3>For decay weight, I just set torch.optim.Adam's parameter weight_decay = 5e-7</h3>
+    <p>The plot of training and validation MSE loss is shown below.</p>
+    <h2>Training and validation MSE loss: (ResNet18)</h2>
+    <img src="./images/nn_img/part3_loss.jpg" width="35%" style="padding-left: 30%;">
+    <p>From the plot above, we can see the training looks good, and now we can apply the model on some images in testing set and visualize them with 
+        the keypoints predicted. I also compute the landmarks of keypoints predicted in original images and show them besides the cropped one. Below are the results.
+        (Left: Cropped, Right: Original)
+    </p>
+    <h2>Visualize some images with the keypoints predicted in testing set:</h2>
+    <img src="./images/nn_img/test_img_cropped_1.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/test_img_origin_1.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/test_img_cropped_3.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/test_img_origin_3.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/test_img_cropped_4.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/test_img_origin_4.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/test_img_cropped_5.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/test_img_origin_5.jpg" width="40%" style="padding-left:5%;">
+    <p>From above, the keypoints predicted on testing set looks pretty good in overall. Then, I also try this out on some photos in my own collection, and I just need to define a
+        bonding box for each image I choose before loading and making predictions on them. The results are shown below. (Left: Cropped, Right: Original)
+    </p>
+    <h2>Running the trained model on some photos from my collection:</h2>
+    <h2>My and my friend's photos that I used in face morphing project</h2>
+    <img src="./images/nn_img/my_img_cropped_1.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/my_img_origin_1.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/my_img_cropped_2.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/my_img_origin_2.jpg" width="40%" style="padding-left:5%;">
+    <p>From above, the prediction looks perfect for the first two as both of them are identification photo and the faces are
+        very clear and looking straight forward. The model also does well for the other two photos in overall and it only has a little bit flaw at
+        the edge of the face on the right side. In short, the model trained works very well for both images in testing set and my own collection.
+    </p>
+    <div class="end-interval"></div>
+    <h2>Part 4 : Pixelwise Classification</h2>
+    <p>Finally, we use the same daend-intervalase but turn the keypoints coordinates into a pixelwise classification problem and train the model with a netural network architecture 
+        that outputs pixel-aligned heatmaps. In this case, we need to preprocess the data and create a 224x224 heatmap for each of keypoint coordinate. Since some of landmarks
+        are out of bonding boxes given, I firstly fix this by enlarging each bonding box and then skip images that still have keypoints out of the
+        bonding box. Then, we can ensure that all images in training and validation set will have keypoints inside the bonding box. For this part, I use
+        a batch size of 16 instead as heatmaps can be very memory demanded and do not apply random shift and random rotation on images to reduce the probability that the keypoints 
+        will be out of bonding box.
+    </p>
+    <p>To generate heatmaps for each keypoint to supervise the model, I place a 2D Gaussian centered at each ground-truth keypoint and the ground-truth
+        coordinate has a value of 1.</p>
+    <h2>The distribution and corresponding parameter of the Gaussian is:</h2>
+    <h3>2D Gaussian with N = 9 (i.e. 9x9), sigma = 3.0</h3>
+    <p>Below are some heatmaps generated with their corresponding sampled images.</p>
+    <h2>Accumulated heatmaps of all landmarks of some sampled images:</h2>
+    <img src="./images/nn_img/sampled_heatmap1.jpg" width="24%">
+    <img src="./images/nn_img/sampled_img_heatmap1.jpg" width="24%">
+    <img src="./images/nn_img/sampled_heatmap2.jpg" width="24%">
+    <img src="./images/nn_img/sampled_img_heatmap2.jpg" width="24%">
+    <img src="./images/nn_img/sampled_heatmap3.jpg" width="24%">
+    <img src="./images/nn_img/sampled_img_heatmap3.jpg" width="24%">
+    <img src="./images/nn_img/sampled_heatmap4.jpg" width="24%">
+    <img src="./images/nn_img/sampled_img_heatmap4.jpg" width="24%">
+    
+    <p>As suggested, I use a pretrained FCN_ResNet and modify its first input layer's input channel to 1 and its last output layer's output channels to 68: heatmaps for each keypoint.
+        Below is the detailed architecture.
+    </p>
+    <h2>FCN_ResNet (modified the first and last layer):</h2>
+    <img src="./images/nn_img/fcn1_part4.jpg" width="35%" style="padding-left: 30%;">
+    <img src="./images/nn_img/fcn2_part4.jpg" width="35%" style="padding-left: 30%;">
+    <img src="./images/nn_img/fcn3_part4.jpg" width="35%" style="padding-left: 30%;">
+
+    <p>The other metrics I use are:
+    </p>
+    <h3>Learning rate = 1e-4</h3>
+    <h3>Epochs : 12</h3>
+    <h3>Loss function : mean squared error loss (torch.nn.MSELoss)</h3>
+    <h3>Optimizer : Adam (torch.optim.Adam)</h3>
+    <h3>For decay learning rate, I use torch.optim.lr_scheduler.ExponentialLR with gamma = 0.8 so that for each epoch: {lr_new} = 0.8 * {lr_last_epoch}</h3>
+    <h3>For decay weight, I just set torch.optim.Adam's parameter weight_decay = 5e-6</h3>
+    <p>Since I've already decided to use the model in part 3 for kaggle submission, I do not run such many training loops here as it's very time consuming. However,
+        from the plot below, we can see that the training process looks pretty good actually.
+    </p>
+    <h2>Training and validation MSE loss: (FCN_ResNet)</h2>
+    <img src="./images/nn_img/part4_loss.jpg" width="35%" style="padding-left: 30%;">
+    <p>Then, I applied the model on some images in testing set to visualize the prediction. To convert the heatmaps back to keypoints, we should compute the weighted average of
+        the points in heatmap, but there are many points in heatmap having values close to zero but not zero. In this case, they will affect the prediction results. Thus,
+        to prevent this, I compute the weighted average of the 15 points having the highest pixel values in heatmap instead. (I try some thresholds to see the results and choose 15 at the end,
+        but I think it could be tuned with more practices to get even better results)
+        The results in detail are shown below. (Left: accumulated heatmaps, Middle: Cropped, Right: Original) </p>
+    <h2>Visualize some images with the keypoints predicted in testing set:</h2>
+    <img src="./images/nn_img/test_heatmap1.jpg" width="33%">
+    <img src="./images/nn_img/test_part4_cropped1.jpg" width="33%">
+    <img src="./images/nn_img/test_part4_original1.jpg" width="33%">
+    <img src="./images/nn_img/test_heatmap2.jpg" width="33%">
+    <img src="./images/nn_img/test_part4_cropped2.jpg" width="33%">
+    <img src="./images/nn_img/test_part4_original2.jpg" width="33%">
+    <img src="./images/nn_img/test_heatmap3.jpg" width="33%">
+    <img src="./images/nn_img/test_part4_cropped3.jpg" width="33%">
+    <img src="./images/nn_img/test_part4_original3.jpg" width="33%">
+    <img src="./images/nn_img/test_heatmap4.jpg" width="33%">
+    <img src="./images/nn_img/test_part4_cropped4.jpg" width="33%">
+    <img src="./images/nn_img/test_part4_original4.jpg" width="33%">
+    <p>From above, we can see the results are not bad at all although there exists some little flaws. However, I think it's good enough as we only train it for 12 epochs. Finally, I also
+        apply the model to photos in my own collection.
+    </p>
+    <h2>Running the trained model on some photos from my collection:</h2>
+    <img src="./images/nn_img/my_img_origin_part4_1.jpg" width="40%" style="padding: 4%;">
+    <img src="./images/nn_img/my_img_origin_part4_2.jpg" width="40%" style="padding: 4%;">
+    <p>The results above look good and after comparing them with the ones in part 3, I notice the strategies they use to detect keypoints can be a little bit different
+        but both of them performs well. If I have more time, I will tune the hyperparameters with more validations and train more loops.</p>
+    <div class="end-interval"></div>
+    <h2>Part 5 : Kaggle</h2>
+    <p>I use the model I trained in part 3 to predict keypoints in testing set and upload the resulted csv file to Kaggle.</p>
+    <p>The MAE/Score I get is : 9.92476, and my username on the website is : Kunkai Lin </p>
+    <div style="text-align: center;"><img src="./images/nn_img/kaggle.jpg"></div>
+    <div class="end-interval"></div>
+    <h2>Bells and Whistles</h2>
+    <p>Recall that we've implement an algorithm in face morphing project to generate a face morphing process by selecting keypoints manually by hand. At this point, we can
+        integrate it with the model we train here and get a system to generate a face morphing process automatically. I load the model in part 3 locally and use it to predict
+        keypoints on input images and then add four corners of the image to the point sets. Then, reusing the code in face morphing project, I get the results below. 
+    </p>
+    <h2>Triangulations on two input images: (my and my friend's photos) </h2>
+    <img src="./images/nn_img/triangulation1.jpg" width="40%" style="padding-left:5%;">
+    <img src="./images/nn_img/triangulation2.jpg" width="40%" style="padding-left:5%;">
+    <h2>GIF generated:</h2>
+    <div style="text-align: center;"><img src="./images/nn_img/me_and_myfriend.gif" width="20%"></div>
+    <div class="end-interval"></div>
+    <h2>Reflection</h2>
+    <p>In overall, I think the project is pretty cool. It takes me a huge amount of time to debug the code and train the model but I think the results deserve it. It's amazing that
+        we can integrate the result in this project with the one in face morphing project and get an automatical face morphing generating system at the end!
+    </p>
+
+    <div class="end-interval"></div>
+    <a href="./projects.html"><h3>BACK</h3></a>
+
+    <div class="end-interval"></div>
+</body>
+
+</html>

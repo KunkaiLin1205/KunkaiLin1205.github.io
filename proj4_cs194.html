@@ -1,0 +1,236 @@
+<html>
+<meta name="viewport" content="width=device-widh, initial-scale=1">
+<head>
+    <link rel="stylesheet" href="style_projects_page.css">
+</head>
+<body>
+    <div class="dropdown">
+        <button class="dropbtn">MENU</button>
+        <div class="dropdown-content">
+            <a href="./index.html">home page</a>
+            <a href="./about.html">about</a>
+            <a href="./coursework.html">coursework</a>
+            <a href="./projects.html">projects</a>
+            <a href="./experience.html">experience</a>
+        </div>
+    </div>
+    <h1>CS 194-26 : Project 4 -- [Auto] Stitching Photo Mosaics</h1>
+    <h1>Kunkai Lin</h1>
+    <h1>Part A : Image Warping and Mosaicing</h1>
+    <h2>Overview</h2>
+    <p>For part A of the project, the main goal is warping images with homography (reprojection) and blending the images reprojected to the same projective plane to get mosaics. In detail,
+        it will be mainly divided into 4 steps: 1) Shoot and digitize the pictures used for warping and blending, 2) Recover homographies between correspondence points on two
+        images, 3) Warp some images with planar surface to rectify them and 4) Warp the images taken in step 1 and blend each pair of them
+        to get mosaics!
+    </p>
+    <h2>Step 1 : Shoot and digitize the pictures</h2>
+    <p> To start with, I take some picture myself as the sources for this project. Following the instructions given on project spec, I use my smart phone's camera
+        and its exposure and focus locking functionality to take 3 pairs of images. For each pair, I use a tripod to fix my phone and shoot two pitcures from the same position but with different perspectives. 
+    </p>
+    <p>Below are three pairs of pictures I take:</p>
+        <img src="./images/stitching_img/bench1.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/lounge1.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/bench2.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/lounge2.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/bins1.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/bins2.jpg" width="15%" style="padding-left: 1%;">
+    <div class="end-interval"></div>
+    <h2>Step 2 : Recover Homographies</h2>
+    <p>Next, we are going to recover the transformation matrix between correspondence points on each pair of images. In our case, the transformation is a homography: Hp = p',
+        and being different from the matrix computed in last project, H is now having 8 unknowns (H = [[a,b,c],[d,e,f],[g,h,1]]). Thus, we will need to select at least 4
+        correspondence points to build a linear system of equations and recover the homography. To make the recovering more send-intervalle, we can select the points as more as
+        possible and solve the overdetermined system using least-squares.
+    </p>
+    <p>Before applying least-squares, we need to first rearrange the correspondence points p, p' and matrix H into the form Ax = b, where A is a 2Nx8 matrix (N is the number of correspondence 
+        points we select), x is an 8x1 vector filled with 8 unknowns and b is a 2Nx1 vector. 
+        (Detailed math staff is on the image below) Then, x can be easily solved by computing 
+        (A.T*A)^(-1)*A.T*b ('*' here is matrix multiplication), and the transformation matrix 
+        can be constructed by filling the values of x into 8 unknowns in H.
+    </p>
+    <p>Below is the detailed process I rearrange Hp = p' into Ax = b on my script:</p>
+    <div style="text-align: center;">
+        <img src="./images/stitching_img/rearrange.jpg" width="40%">
+    </div>
+    <div class="end-interval"></div>
+    <h2>Step 3 : Warping the images and image rectification</h2>
+    <p>Now, we're going to warp the image from the projective plane it locates to the another projective plane by homographies we recover in the last part. To begin with,
+        we need to first compute the bounding box of image warped (i.e. the size of image warped). This can be done easily by first warping the four corners of the original image
+        and keep the maximum and minimum values along both x_axis and y_axis respectively. After warping each corner, we can get the size of box by subtracting minimum value in x direction
+        or y direction from the maximum ones. (For here, I notice some of the coordinates are negative and the box is actually not starting from the origin, so I save the minimum value
+        in both x and y directions used to position the image when blending image warped in step 4).
+    </p>
+    <p>After getting the bounding box, we can now do the inverse warping to get the image warped, one thing to be noticed here is that as the bounding box I get here has much larger
+        size than the original image, so some of the pixels of image warped could have no value. In this case, I filter out the indexes out of bound and just set their pixel values to zero.
+        To distinguish the pixels on image warped having values and having no values, I also add an additional alpha channel to image warped and set all pixels having values to 1 in alpha channel.
+        (This step is very important for mask construction in step!)
+    </p>
+    <p>To check the functionality of warp function, I do some ground plane rectification on couple of images having planar surface. To get the correspondence points,
+        I first select four corners of plane on the original image and then define their corresponding front parallel points by hand. </p>
+    <p>Below are the results of image rectification:</p>
+        <img src="./images/stitching_img/bus_stop.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/points1.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/bus_stop_rec.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/ipad.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/points3.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/ipad_rec.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/laptop.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/points2.jpg" width="15%" style="padding-left: 1%;">
+        <img src="./images/stitching_img/laptop_rec.jpg" width="15%" style="padding-left: 1%;">
+    <h2>Step 4 : Blending the images into a mosaic</h2>
+    <p>Finally, I am going to blend the images to produce mosaics using the pictures I shoot in step 1. To start with, I warp one of images into the projective plane of the another
+        image. Then, in my blend function, I first compute the size of mosaic and each image's position in mosaic based on the values I save in warp function (the bounding box's minimum x
+        and y values/indexs). To remove the blending artifacts as much as possible, I choose to use Laplacian pyramid blending learned in previous projects and reuse the function I
+        defined that time. To construct the mask used for Laplacian pyramid blending, I follow the steps mentioned in lectures: computing the distance transform for each image 
+        and setting the alpha based on them. Since I have added an alpha channel to image warped when warping it, I can easily figure out the indexes of pixels having values. I remove the
+        alpha channel of it after getting the mask used for blending to make sure that the numbers of color channels of two images are consistent (both of them should have only 3 channels).
+    </p>
+    <p>Below is an example of the mask construction process based on the pictures of bench:</p>
+            <img src="./images/stitching_img/bench1_dist.jpg" width="30%" style="padding-left:2%">
+            <img src="./images/stitching_img/bench2_dist.jpg" width="30%" style="padding-left:2%">
+            <img src="./images/stitching_img/bench_mask.jpg" width="30%" style="padding-left:2%">
+    <p>Constructing the mask in this way and using Laplacian pyramid blending with it produces a couple of results look pretty good in overall,
+        and below are source images and mosaics for each pair of pictures I shoot at the beginning of the project:
+    </p>
+    <p>bench mosaic:</p>
+            <img src="./images/stitching_img/bench1.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/bench2.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/points4.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/points5.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/bench1_m.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/bench2_m.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/bench_mosaic.jpg" width="13%" style="padding-left: 1%;">
+    
+    <p>bins mosaic:</p>
+            <img src="./images/stitching_img/bins1.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/bins2.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/points6.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/points7.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/bins1_m.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/bins2_m.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/bins_mosaic.jpg" width="13%" style="padding-left: 1%;">
+
+    <p>lounge mosaic:</p>
+            <img src="./images/stitching_img/lounge1.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/lounge2.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/points8.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/points9.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/lounge1_m.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/lounge2_m.jpg" width="13%" style="padding-left: 1%;">
+            <img src="./images/stitching_img/lounge_mosaic.jpg" width="13%" style="padding-left: 1%;">
+
+    <h2>Reflection: What I've learned</h2>
+    <p>In overall, I feel this project is very interesting. Warping the images to another projective plane is pretty cool and it helps me understand the image
+        warping much better. In addition, applying this to produce mosaic with Laplacian pyramid blending help me review the knowledge learned before about blending.
+    </p>
+    <div class="end-interval"></div>
+    <hr>
+    <div class="end-interval"></div>
+    <h1>Part B : Feature Matching for Autostitching</h1>
+    <h2>Overview</h2>
+    <p>For part B of the project, we're going to create a system for automatically stitching images into a mosaic instead mannually selecting key points for input image by hand
+        like what we did in part A. In detail, it's mainly divided into 5 steps: 1) Detecting the corner features in an image, 2) Extracting a feature descriptor for each feature point,
+        3) Matching the feature descriptors between two images, 4) Using a robust method, RANSAC, to compute a homography and 5) Blend the image to produce mosaics like what we did in part A!
+    </p>
+    <h2>Step 1: Detecting the corner features</h2>
+    <p>To begin with, we need to first detect the Harris corner points in an image, and since the implementation of Harris interest points detection has already been provided to me, I can just use it 
+        and set the parameter "edge_discard" to ignore some of pixels at four edges when detecting the interesting points (the pixels discard here are necessary and should be at least 20 since
+         we are going to use a 40x40 patch for each point selected when extracting the feature descriptors in later steps). Based on the images I shoot, I set "edge_discard" to 100 pixels.
+    </p>
+    <p>Below are the figures of the Harris corners overlaid on the images I shoot:</p>
+            <img src="./images/stitching_img/points1_harris.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points2_harris.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points3_harris.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points4_harris.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points5_harris.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points6_harris.jpg" width="15%" style="padding-left:1%;">
+    <p>From above, we can see the number of Harris corners detected is huge and it's unreasonable to extract feature descriptor for each of them and match. Thus, we should select 500 points for 
+        each image out of the Harris corners detected using the technique of Adaptive Non-Maximal Suppresion. According to the paper given, for each point_i, we're going to computed
+    </p>
+    <h3> radius_i =
+        min |point_i - point_j| s.t. h(point_i) < c_robust * h(point_j) where 1) h(point) is the h value of point and we can get it from Harris corners detection function given and 2) point_j comes
+        from sets of all Harris corners and 3) c_roubust is set to 0.9 used to ensure that a neighbour must have significantly higher strength for suppression to take place.
+    </h3>
+    <p>Finally, the 500 points with the largest radius will be selected.
+    </p>
+    <p>Below are the figures of 500 Harris corners selected by ANMS overlaid on the images I shoot:</p>
+            <img src="./images/stitching_img/points1_anms.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points2_anms.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points3_anms.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points4_anms.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points5_anms.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points6_anms.jpg" width="15%" style="padding-left:1%;">
+    <h2>Step 2 : Extracting the feature descriptors</h2>
+    <p>Then, we're going to extract a feature descriptor for each point selected. Following what described in the paper given, for each point, I first get a 40x40 patch around it and then downsample
+        it to a 8x8 patch of pixels. After getting the 8x8 patch of pixels, I do the bias/gain normalization to make sure that the descriptor's mean is 0 and its standarad deviation is 1.
+    </p>
+    <p>To help you visualize what the feature descriptor looks like, I put some pairs of descriptors in bench image that has been matched in steps later below:</p>
+            <img src="./images/stitching_img/f0_1.jpg" width="9%" style="padding-left: 3%;">
+            <img src="./images/stitching_img/f0_2.jpg" width="9%">
+            <img src="./images/stitching_img/f1_1.jpg" width="9%">
+            <img src="./images/stitching_img/f1_2.jpg" width="9%">
+            <img src="./images/stitching_img/f2_1.jpg" width="9%">
+            <img src="./images/stitching_img/f2_2.jpg" width="9%">
+            <img src="./images/stitching_img/f3_1.jpg" width="9%">
+            <img src="./images/stitching_img/f3_2.jpg" width="9%">
+            <img src="./images/stitching_img/f4_1.jpg" width="9%">
+            <img src="./images/stitching_img/f4_2.jpg" width="9%">
+            
+    <h2>Step 3 : Matching the feature descriptors between two images</h2>
+    <p>After extracting the feature descriptor for each point, we can then proceed the matching process. Using Lowe's trick mentioned in lecture, for each descriptor, we'll compute the SSD between
+        it and each of other descriptors one by one and take the two descriptors having the smallest SSD with it, 1-NN and 2-NN, at the end. Only when 1-NN is much better than 2-NN, we can say 1-NN
+        is a good match. Otherwise, both of them should be discard. According to the paper given and doing some experiments myself, I find (SSD of 1-NN)/(SSD of 2-NN) < 0.35 is a good threshold in the
+        matching process.
+    </p>
+    <p>Below are the points matched for each pair of images, and I annotate each pair of points by the same number:</p>
+            <img src="./images/stitching_img/points1_matched.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points2_matched.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points3_matched.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points4_matched.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points5_matched.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points6_matched.jpg" width="15%" style="padding-left:1%;">
+    <p>From above, we can notice that there still exists some outliers. To eliminate these outliers, we'll use a robust method, RANSAC, in next step to select the final set of points used to compute homography.
+    </p>
+    <h2>Step 4 : RANSAC</h2>
+    <p>To refine the points used to recover the homography, we apply Random Sample Consensus, RANSAC, at the end on the points matched. The steps are not very complicated as covered in the lecture
+        and we're going to iteratively figure out so-called inliers among two point sets matched:</p>
+    <h3>RANSAC loop:</h3>
+    <h3>1.Randomly select four feature pairs</h3>
+    <h3>2.Compute homography, H, based on these four pairs of points.</h3>
+    <h3>3.Compute inliers where the distance between p'_i and Hp_i (p'_i and p_i belongs to the 4 pairs of points selected in step 1) is less than the threshold we choose</h3>
+    <h3>(Repeat the first 3 steps N times and the N I choose here is 2000 times, and keep the largest set of inliers)</h3>
+    <h3>4.Re-compute the H based on the largest set of inliers kept</h3>
+    <p>After implementing RANSAC, the outliers have been eliminated completely. The results of it for each pair of images are shown below:</p>
+            <img src="./images/stitching_img/points1_ransac.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points2_ransac.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points3_ransac.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points4_ransac.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points5_ransac.jpg" width="15%" style="padding-left:1%;">
+            <img src="./images/stitching_img/points6_ransac.jpg" width="15%" style="padding-left:1%;">
+
+    <h2>Step 5 : Blend the image to produce mosaics</h2>
+    <p>Now, after getting the point sets needed from the steps above and recovering the homography, we can produce mosaics like what we did in part A.</p>
+    <p>Below are the mosaics produced by auto-stitching and selecting points mannually by hand (Right: auto, Left: by hand):</p>
+    <p>bench:</p>
+            <img src="./images/stitching_img/bench_mosaic_auto.jpg" width="40%" style="padding-left: 5%;">
+            <img src="./images/stitching_img/bench_mosaic.jpg" width="40%" style="padding-left: 5%;">
+    <p>bins:</p>
+            <img src="./images/stitching_img/bins_mosaic_auto.jpg" width="40%" style="padding-left: 5%;">
+            <img src="./images/stitching_img/bins_mosaic.jpg" width="40%" style="padding-left: 5%;">
+    <p>lounge:</p>
+            <img src="./images/stitching_img/lounge_mosaic_auto.jpg" width="40%" style="padding-left: 5%;">
+            <img src="./images/stitching_img/lounge_mosaic.jpg" width="40%" style="padding-left: 5%;">
+    <p>From above, we can see that the auto-stitching does pretty well for each mosaic in overall. It's cool that the whole process to produce the mosaics is done automatically and 
+        the results look good even compared with the ones using the points carefully selected by hand.
+    </p>
+    <h2>Reflection: What I've learned</h2>
+    <p>To build a system to select correspondence points on two images automatically is pretty cool and the feature extracting makes my understanding towards visual data much deeper.
+        The story about Lowe's trick professor Efros told in lecture is fun and it's amazing that this can be applied in the process of matching feature descriptor between two images.
+    </p>
+    
+    <div class="end-interval"></div>
+    <a href="./projects.html"><h3>BACK</h3></a>
+
+    <div class="end-interval"></div>
+</body>
+
+</html>

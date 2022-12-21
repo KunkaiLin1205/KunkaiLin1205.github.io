@@ -1,19 +1,20 @@
 <html>
 <meta name="viewport" content="width=device-widh, initial-scale=1">
 <head>
-    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="style_projects_page.css">
 </head>
 <body>
     <div class="dropdown">
         <button class="dropbtn">MENU</button>
         <div class="dropdown-content">
             <a href="./index.html">home page</a>
+            <a href="./about.html">about</a>
             <a href="./coursework.html">coursework</a>
             <a href="./projects.html">projects</a>
             <a href="./experience.html">experience</a>
         </div>
     </div>
-    <h1>CS 194 : Project 1 -- Images of the Russia Empire : Colorizing the Prokudin-Gorskii Collection</h1>
+    <h1>CS 194-26 : Project 1 -- Images of the Russia Empire : Colorizing the Prokudin-Gorskii Collection</h1>
     <h1>Kunkai Lin</h1>
     <h2>Overview</h2>
     <p>The goal of project is to take the digitized Prokudin-Gorskii glass plate image, and apply some image processing techniques to produce color
@@ -29,30 +30,14 @@
         and B and keep the displacement for R and G with best score (smallest differences) respectively. Finally, align R and G with their displacement kept and get the RGB image 
         by aligned R, aligned G and B.
     </p>
-    <p>This naive implementation works well for small/low res images and the comparisons between example images before and after alignment are shown below:</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>before alignment</figcaption>
-            <img src="./images/colorize_img/catheral(before alignment).jpg">
-            <figcaption>before alignment</figcaption>
-            <img src="./images/colorize_img/tobolsk(before alignment).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>after alignment G:[-1, 1] R:[-1, 7]</figcaption>
-            <img src="./images/colorize_img/cathedral(after alignment).jpg" title="After alignment">
-            <figcaption>after alignment G:[2, 3] R:[3, 6]</figcaption>
-            <img src="./images/colorize_img/tobolsk(after alignment).jpg" title="After alignment">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>before alignment</figcaption>
-            <img src="./images/colorize_img/monastery(before alignment).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>after alignment G:[0, -6] R:[1, 9]</figcaption>
-            <img src="./images/colorize_img/monastery(after alignment).jpg" title="After alignment">
-        </figure>
-    </div>
-    <div class="tab"></div>
+    <p>This naive implementation works well for small/low res images and the comparisons between example images before and after alignment are shown below (Left: before, Right: after):</p>
+    <img src="./images/colorize_img/catheral(before alignment).jpg" width="15%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/cathedral(after alignment).jpg" width="15%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/tobolsk(before alignment).jpg" width="15%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/tobolsk(after alignment).jpg" width="15%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/monastery(before alignment).jpg" width="15%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/monastery(after alignment).jpg" width="15%" style="padding-left: 1%;">
+    <div class="end-interval"></div>
     <h2>Part 2 : Multiscale pyramid implementation</h2>
     <p>Single-scale implementation above looks good for small images, but it's too expensive for large images. Thus, I introduce a new algorithm for large images: multiscale pyramid
         version alignment. To begin with, I create a list of rescaled images (with a factor of 2) of the given image and order them from the smallest (>= 30x30 since my search window in Part 1 is 30x30) 
@@ -67,29 +52,13 @@
     <p>
         The implementation provides us the displacement needed for G and R alignment, and we can get RGB color image with the same steps in part 1 with the displacement.
     </p>
-    <p>I provide some of the comparisons between example images before and after alignment below:(A full list of results will be shown in part 4)</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>before alignment</figcaption>
-            <img src="./images/colorize_img/three_generation(before alignment).jpg">
-            <figcaption>before alignment</figcaption>
-            <img src="./images/colorize_img/melons(before alignment).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>after alignment G:[5, 52] R:[7, 108]</figcaption>
-            <img src="./images/colorize_img/three_generations(after alignment).jpg">
-            <figcaption>after alignment G:[4, 83] R:[7, 176]</figcaption>
-            <img src="./images/colorize_img/melons(after alignment).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>before alignment</figcaption>
-            <img src="./images/colorize_img/lady(before alignment).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>lafter alignment G:[-6, 57] R:[-17, 123]</figcaption>
-            <img src="./images/colorize_img/lady(after alignment).jpg">
-        </figure>
-    </div>
+    <p>I provide some of the comparisons between example images before and after alignment below (Left: before, Right: after):</p>
+            <img src="./images/colorize_img/three_generation(before alignment).jpg" width="15%" style="padding-left: 1%;">
+            <img src="./images/colorize_img/three_generations(after alignment).jpg" width="15%" style="padding-left: 1%;">
+            <img src="./images/colorize_img/melons(before alignment).jpg" width="15%" style="padding-left: 1%;">
+            <img src="./images/colorize_img/melons(after alignment).jpg" width="15%" style="padding-left: 1%;">
+            <img src="./images/colorize_img/lady(before alignment).jpg" width="15%" style="padding-left: 1%;">
+            <img src="./images/colorize_img/lady(after alignment).jpg" width="15%" style="padding-left: 1%;">
     <p>From above, we can see the pyramid implementation works pretty well for these example images, and it works well for most of other example images, too. However, it does poorly 
         for emir, train and harvesters. After I check the B, G, R images for these three exceptions, I realize the reason could be the brightness of their B, G, R channels are totally 
         different (just as mentioned on project's spec).
@@ -97,7 +66,7 @@
     <p>To solve this issue, I provide a new feature: edge, for each of B, G, R and align them based on edges instead of RGB similarity. The details are explained in the next
         part: Bells & Whistles.
     </p>
-    <div class="tab"></div>
+    <div class="end-interval"></div>
     <h2>Part 3 : Bells & Whistles(Aligned the images based on edges instead of RGB similarity)</h2>
     <p>To get the edges of each B, G, R images, I apply the sobel vertical edge filter ([[1,0,-1],[2,0,-2],[1,0,-1]]) and sobel horizontal edge filer ([[1,2,1],[0,0,0],[-1,-2,-1]]) introduced in lecture, and from my intuition, return MAX(vertical
         edges, horizontal edges) to get the complete edges and the results prove that my intuition should be correct. This algorithm takes about 60 to 80 seconds to figure out the edges of one channel. It's
@@ -105,84 +74,42 @@
     </p>
     <p>One point should be noted here is that: we should take the absolute value of filter's output, I forget this at my first implementation and it slightly affects the final results.</p>
     <p>Below is what I get after apply edge filter on emir's B channel:</p>
-    <div class="c"><img src="./images/colorize_img/emif-edge-b.jpg" width="350" height="300"></div>
+    <div style="text-align: center;"><img src="./images/colorize_img/emif-edge-b.jpg" width="350" height="300"></div>
     <p>
-        Below are the result before and after using the "edges" feature:
+        Below are the result before and after using the "edges" feature (Left: with RGB, Right: with edges):
     </p>
-    <div class="imageblock">
-    <figure class="aboutimage">
-        <figcaption>based on RGB similarity G:[7, -3] R:[17, 107]</figcaption>
-        <img src="./images/colorize_img/emir(after alignment).jpg">
-    </figure>
-    <figure class="aboutimage">
-        <figcaption>based on edges G:[-2, 50] R:[40, 107]</figcaption>
-        <img src="./images/colorize_img/emif(after alignment + edge filter).jpg">
-    </figure>
-    <figure class="aboutimage">
-        <figcaption>based on RGB similarity G:[-7, 111] R:[1, 107]</figcaption>
-        <img src="./images/colorize_img/train(after alignment).jpg">
-    </figure>
-    <figure class="aboutimage">
-        <figcaption>based on edges G:[1, 41] R:[29, 85]</figcaption>
-        <img src="./images/colorize_img/train(after alignment + edge filter).jpg">
-    </figure>
-    </div>
-    <div class="tab"></div>
-    <h2>Part 4 : Results (I also state the feasure each alignment based on for each image)</h2>
+    <img src="./images/colorize_img/emir(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/emif(after alignment + edge filter).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/train(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/train(after alignment + edge filter).jpg" width="23%" style="padding-left: 1%;">
+    <div class="end-interval"></div>
+    <h2>Part 4 : Results</h2>
+    <p>Small images:</p>
+    <img src="./images/colorize_img/cathedral(after alignment).jpg" width="32%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/tobolsk(after alignment).jpg" width="32%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/monastery(after alignment).jpg" width="32%" style="padding-left: 1%;">
     <p>Large images:</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>church(RGB similarity) G:[-5, 0] R:[-6, 52]</figcaption>
-            <img src="./images/colorize_img/church(after alignment).jpg">
-            <figcaption>lady(RGB similarity) G:[-6, 57] R:[-17, 123]</figcaption>
-            <img src="./images/colorize_img/lady(after alignment).jpg">
-            <figcaption>self_portrait(RGB similarity) G:[-2, 50] R:[-5, 130]</figcaption>
-            <img src="./images/colorize_img/self_portrait(after alignment).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>emir(edges) G:[-2, 50] R:[40, 107]</figcaption>
-            <img src="./images/colorize_img/emif(after alignment + edge filter).jpg"">
-            <figcaption>melons(RGB similarity) G:[4, 83] R:[7, 176]</figcaption>
-            <img src="./images/colorize_img/melons(after alignment).jpg">
-            <figcaption>three_generations(RGB similarity) G:[5, 52] R:[7, 108]</figcaption>
-            <img src="./images/colorize_img/three_generations(after alignment).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>harvesters(edges) G:[-6, 84] R:[3, 126]</figcaption>
-            <img src="./images/colorize_img/harvesters(after alignment + edge filter).jpg"">
-            <figcaption>onion_church(RGB similarity) G:[22, 52] R:[35, 108]</figcaption>
-            <img src="./images/colorize_img/onion_church(after alignment).jpg">
-            <figcaption>train(edges) G:[1, 41] R:[29, 85]</figcaption>
-            <img src="./images/colorize_img/train(after alignment + edge filter).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>icon(RGB similarity) G:[16, 42] R:[22, 89]</figcaption>
-            <img src="./images/colorize_img/icon(after alignment).jpg">
-            <figcaption>sculpture(RGB similarity) G:[-11, 33] R:[-26, 140]</figcaption>
-            <img src="./images/colorize_img/sculpture(after alignment).jpg">
-        </figure>
-    </div>
+    <img src="./images/colorize_img/church(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/lady(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/self_portrait(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/emif(after alignment + edge filter).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/melons(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/three_generations(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/harvesters(after alignment + edge filter).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/onion_church(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/train(after alignment + edge filter).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/icon(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/sculpture(after alignment).jpg" width="23%" style="padding-left: 1%;">
     <p>Extra images from the Prokudin-Gorskii collection:</p>
-    <div class="imageblock">
-        <figure class="aboutimage">
-            <figcaption>in_little_Russia(edges) G:[-3, 20] R:[-5, 232]</figcaption>
-            <img src="./images/colorize_img/in_little_Russia(after alignment).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>lilacs(edges) G:[29, 31] R:[12, 51]</figcaption>
-            <img src="./images/colorize_img/lilacs(after alignment).jpg">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>buildings_trees(edges) G:[12, 45] R:[25, 98]</figcaption>
-            <img src="./images/colorize_img/buildings_trees (after alignment).jpg"">
-        </figure>
-        <figure class="aboutimage">
-            <figcaption>in_Italy(RGB similarity) G:[7, 25] R:[11, 87]</figcaption>
-            <img src="./images/colorize_img/in_Italy (after alignment).jpg">
-        </figure>
-    </div>
-    <div class="tab"></div>
-    <a href="./projects.html"><h1>BACK</h1></a>
+    <img src="./images/colorize_img/in_little_Russia(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/lilacs(after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/buildings_trees (after alignment).jpg" width="23%" style="padding-left: 1%;">
+    <img src="./images/colorize_img/in_Italy (after alignment).jpg" width="23%" style="padding-left: 1%;">
+
+    <div class="end-interval"></div>
+    <a href="./projects.html"><h2>BACK</h2></a>
+
+    <div class="end-interval"></div>
 </body>
 
 </html>
